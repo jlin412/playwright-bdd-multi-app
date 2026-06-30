@@ -1,13 +1,10 @@
 {
   "cucumber.features": [
-    "features/**/*.feature"
+    "apps/*/features/**/*.feature"
   ],
   "cucumber.glue": [
-    "pom/**/*.ts",
-    "som/**/*.ts",
-    "bdd/steps/**/*.ts",
-    "features/**/*.ts",
-    "src/**/*.ts",
-    "tests/**/*.ts"
+    "apps/*/pom/**/*.ts",
+    "apps/*/som/**/*.ts",
+    "apps/*/steps/**/*.ts"
   ]
 }
