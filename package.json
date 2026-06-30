@@ -27,7 +27,13 @@
     "debug:ui": "playwright test --ui",
     "debug:bdd:ui": "npm run bddgen && playwright test -c playwright.bdd.config.ts --ui",
     "report": "playwright show-report",
-    "report:bdd:html": "npx http-server ./cucumber-report -c-1 -a localhost -o index.html"
+    "report:bdd:html": "npx http-server ./cucumber-report -c-1 -a localhost -o index.html",
+    "test:github": "SMOKE_ONLY=1 playwright test apps/github",
+    "test:bdd:github": "node scripts/bdd.mjs github",
+    "test:bestbuy": "SMOKE_ONLY=1 playwright test apps/bestbuy",
+    "test:bdd:bestbuy": "node scripts/bdd.mjs bestbuy",
+    "test:fakestore": "SMOKE_ONLY=1 playwright test apps/fakestore",
+    "test:bdd:fakestore": "node scripts/bdd.mjs fakestore"
   },
   "devDependencies": {
     "@playwright/test": "1.57.0",

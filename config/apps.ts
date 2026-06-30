@@ -9,5 +9,7 @@ import type { AppDescriptor } from '../lib/app-config';
 import yosemitecinema from '../apps/yosemitecinema/app.config';
 import saucedemo from '../apps/saucedemo/app.config';
 import petstore from '../apps/petstore/app.config';
+import bestbuy from '../apps/bestbuy/app.config';
+import fakestore from '../apps/fakestore/app.config';
 
-export const apps: AppDescriptor[] = [yosemitecinema, saucedemo, petstore];
+export const apps: AppDescriptor[] = [yosemitecinema, saucedemo, petstore, bestbuy, fakestore];

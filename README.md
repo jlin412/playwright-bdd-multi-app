@@ -14,6 +14,7 @@ a new app is "drop a folder + register one line" (or run `/new-api-app` / `/new-
 | App | Kind | Target | Shows |
 |---|---|---|---|
 | `apps/saucedemo` | UI | https://www.saucedemo.com | Login, cart, full checkout across chromium/firefox/webkit |
+| `apps/fakestore` | API | https://fakestoreapi.com | Product create/list/get/update/delete coverage against a public e-commerce sandbox |
 | `apps/petstore` | API | https://petstore.swagger.io | Create/fetch pet, find-by-status, store inventory |
 | `apps/yosemitecinema` | UI + API | https://www.yosemitecinema.com | A richer real-world suite (browsing, auth, ticketing, payment) |
 
@@ -69,6 +70,8 @@ npm run test:regression           # all UI spec tests incl. multi-step workflows
 # By app (shortcut scripts — one per app, spec + BDD)
 npm run test:saucedemo            # spec smoke for saucedemo (all 3 browsers)
 npm run test:bdd:saucedemo        # BDD for saucedemo
+npm run test:fakestore            # spec for fakestore
+npm run test:bdd:fakestore        # BDD for fakestore
 npm run test:petstore             # spec for petstore
 npm run test:bdd:petstore         # BDD for petstore
 npm run test:yosemitecinema
@@ -122,6 +125,7 @@ Because Playwright runs all apps in one process, **keep keys app-unique
 (prefixed)** so they don't collide. Per-app keys in use:
 
 - `apps/saucedemo/.env` → `SAUCEDEMO_BASE_URL`, `SAUCE_USERNAME`, `SAUCE_PASSWORD`
+- `apps/fakestore/.env` → `FAKESTORE_BASE_URL`
 - `apps/petstore/.env` → `PETSTORE_BASE_URL`
 - `apps/yosemitecinema/.env` → `YOSEMITECINEMA_BASE_URL`, `TEST_MEMBER_EMAIL`, `TEST_MEMBER_PASSWORD`
 
@@ -192,7 +196,8 @@ screenshots are retained on failure (`trace: retain-on-failure`).
 
 ## Notes on the example targets
 
-- **SauceDemo / PetStore** are public demo services — no local stack required.
+- **SauceDemo / FakeStore / PetStore** are public demo services — no local stack required.
+- **FakeStore** (`fakestoreapi.com`) is a public sandbox with permissive write endpoints; these tests focus on response shape and echoed payloads for product CRUD rather than strict read-after-write persistence.
 - **PetStore** (`petstore.swagger.io`) is a shared, mutable sandbox; its tests assert response *shape* and a create→fetch round-trip rather than exact counts, with readiness polling. CI `retries: 1` covers transient flakiness.
 - **yosemitecinema** is a live external site — its config uses generous timeouts and caps BDD workers at 2.
 
