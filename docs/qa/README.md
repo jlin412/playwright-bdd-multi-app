@@ -10,6 +10,8 @@ Repository conventions the automation commands follow live in
 
 ## Pipeline
 
+![Agentic QA artifact-driven automation pipeline overview](../images/Agentic_QA_Automation_Pipeline_Overview.png)
+
 | Phase | UI | API | Output (per app) |
 |---|---|---|---|
 | 1. Planning | `/plan-ui` | `/plan-api` | `docs/qa/<app>/TestPlan.md` |

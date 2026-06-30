@@ -9,6 +9,10 @@ in **two test styles** that share one Page-Object / Service-Object layer:
 Each app under test lives in a self-contained folder under `apps/<name>/`. Adding
 a new app is "drop a folder + register one line" (or run `/new-api-app` / `/new-ui-app`).
 
+## Visual overview
+
+![Playwright + BDD multi-app testing template overview](docs/images/Multi-App_Testing_Framework_Template.png)
+
 ## Bundled example apps
 
 | App | Kind | Target | Shows |
@@ -169,6 +173,8 @@ An artifact-driven QA pipeline ships as slash commands — each phase produces a
 reviewable artifact, and the final phase generates real Playwright + `playwright-bdd`
 tests in `apps/<app>/`. Full guide: [docs/qa/README.md](docs/qa/README.md);
 automation conventions: [.claude/CLAUDE.md](.claude/CLAUDE.md).
+
+![Agentic QA artifact-driven automation pipeline overview](docs/images/Agentic_QA_Automation_Pipeline_Overview.png)
 
 | Phase | UI | API | Output (per app) |
 |---|---|---|---|
