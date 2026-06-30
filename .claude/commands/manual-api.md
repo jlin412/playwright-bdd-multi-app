@@ -18,9 +18,10 @@ Rules:
 
 Before designing (START):
 1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
-3. Read the input artifact: `docs/qa/<app>/TestPlan.md`.
-4. Validate: requires **Planning = done**. If `TestPlan.md` is missing or the app isn't `planned`, **stop** and tell the user to run `/plan-api` first.
+2. Read the API knowledge files: `.claude/knowledge/api-testing.md`, `.claude/knowledge/security-testing.md`, `.claude/knowledge/performance-testing.md`. Use them to expand planned tests into thorough manual cases.
+3. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
+4. Read the input artifact: `docs/qa/<app>/TestPlan.md`.
+5. Validate: requires **Planning = done**. If `TestPlan.md` is missing or the app isn't `planned`, **stop** and tell the user to run `/plan-api` first.
 
 After designing (FINISH):
-5. Update `docs/qa/<app>/ProjectState.md` → `Current stage: manual-designed` (Manual Design row `done`, timestamp, command) and add a History row.
+6. Update `docs/qa/<app>/ProjectState.md` → `Current stage: manual-designed` (Manual Design row `done`, timestamp, command) and add a History row.

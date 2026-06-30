@@ -55,3 +55,32 @@ command and a summary of files created/modified.
 
 Do not skip checkpoints. `/auto-*` writes code **only** from the approved
 `AutomationPlan.md`.
+
+## QA Knowledge Library
+
+Before running any QA workflow command, read the relevant knowledge files.
+
+UI commands:
+- `.claude/knowledge/ui-testing.md`
+- `.claude/knowledge/security-testing.md`
+- `.claude/knowledge/accessibility-testing.md`
+- `.claude/knowledge/performance-testing.md`
+
+API commands:
+- `.claude/knowledge/api-testing.md`
+- `.claude/knowledge/security-testing.md`
+- `.claude/knowledge/performance-testing.md`
+
+Mobile commands:
+- `.claude/knowledge/mobile-testing.md`
+- `.claude/knowledge/security-testing.md`
+- `.claude/knowledge/accessibility-testing.md`
+- `.claude/knowledge/performance-testing.md`
+
+IoT commands:
+- `.claude/knowledge/iot-testing.md`
+- `.claude/knowledge/api-testing.md`
+- `.claude/knowledge/security-testing.md`
+- `.claude/knowledge/performance-testing.md`
+
+Use these files as checklists for planning, manual test generation, automation planning, and coverage gap analysis.

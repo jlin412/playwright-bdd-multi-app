@@ -24,6 +24,7 @@ Before implementing (START):
 2. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
 3. Read the input artifact: `docs/qa/<app>/AutomationPlan.md`.
 4. Validate: requires **Automation Planning = done** (prefer `approved`). If `AutomationPlan.md` is missing or the app isn't `automation-planned`, **stop** and tell the user to run `/auto-plan-ui` first.
+5. Read only the relevant `apps/<app>/` source files needed to implement the approved plan. Do not perform a full knowledge review — knowledge files were already used in the planning phases.
 
 After implementing (FINISH):
-5. Update `docs/qa/<app>/ProjectState.md` → `Current stage: automated` (Automation row `done`, timestamp, command), and add a History row noting the validation result.
+6. Update `docs/qa/<app>/ProjectState.md` → `Current stage: automated` (Automation row `done`, timestamp, command), and add a History row noting the validation result.

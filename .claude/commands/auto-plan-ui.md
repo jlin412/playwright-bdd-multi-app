@@ -21,9 +21,10 @@ Rules:
 
 Before planning automation (START):
 1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
-3. Read the input artifact: `docs/qa/<app>/TestCases.md`.
-4. Validate: requires **Manual Design = done**. If `TestCases.md` is missing or the app isn't `manual-designed`, **stop** and tell the user to run `/manual-ui` first.
+2. Read the UI knowledge files: `.claude/knowledge/ui-testing.md`, `.claude/knowledge/security-testing.md`, `.claude/knowledge/accessibility-testing.md`, `.claude/knowledge/performance-testing.md`. Use them to identify coverage gaps and assess automation candidacy.
+3. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
+4. Read the input artifact: `docs/qa/<app>/TestCases.md`.
+5. Validate: requires **Manual Design = done**. If `TestCases.md` is missing or the app isn't `manual-designed`, **stop** and tell the user to run `/manual-ui` first.
 
 After planning automation (FINISH):
-5. Update `docs/qa/<app>/ProjectState.md` → `Current stage: automation-planned` (Automation Planning row `done`, timestamp, command) and add a History row.
+6. Update `docs/qa/<app>/ProjectState.md` → `Current stage: automation-planned` (Automation Planning row `done`, timestamp, command) and add a History row.
