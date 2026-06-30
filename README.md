@@ -7,7 +7,7 @@ in **two test styles** that share one Page-Object / Service-Object layer:
 - **BDD style** — Gherkin `.feature` files via [`playwright-bdd`](https://vitalets.github.io/playwright-bdd/).
 
 Each app under test lives in a self-contained folder under `apps/<name>/`. Adding
-a new app is "drop a folder + register one line" (or run `npm run new:app`).
+a new app is "drop a folder + register one line" (or run `/new-api-app` / `/new-ui-app`).
 
 ## Bundled example apps
 
@@ -35,7 +35,7 @@ config/apps.ts         # the app registry — imported by both Playwright config
 lib/app-config.ts      # AppDescriptor type + helpers
 playwright.config.ts       # spec projects, generated from the registry
 playwright.bdd.config.ts   # one defineBddConfig per app, generated from the registry
-scripts/new-app.mjs    # scaffolds a new app from apps/_template
+scripts/new-app.mjs    # scaffold engine (behind /new-api-app and /new-ui-app)
 ```
 
 **One class layer, two styles.** Every POM/SOM class exposes plain helper methods
@@ -74,7 +74,7 @@ npm run test:bdd:petstore         # BDD for petstore
 npm run test:yosemitecinema
 npm run test:bdd:yosemitecinema
 # (equivalent path filter: npx playwright test apps/<name>)
-# `npm run new:app` adds test:<name> + test:bdd:<name> automatically.
+# /new-api-app and /new-ui-app add test:<name> + test:bdd:<name> automatically.
 
 # By project (browser/style + app)
 npx playwright test --project=ui-saucedemo-chromium
@@ -132,26 +132,28 @@ Other knobs:
 
 ## Add a new app
 
-Run the generator with no arguments for an interactive wizard:
+Use the Claude Code slash commands (in `.claude/commands/`):
 
-```bash
-npm run new:app
-#   App name (lowercase-hyphen): mystore
-#   Kind [ui/api/both] (both): api
-#   Base / test URL (https://example.com): https://api.example.com
-#   Swagger/OpenAPI spec URL (blank to skip): https://api.example.com/openapi.json
+```text
+/new-api-app petshop https://petstore.swagger.io/v2/swagger.json
+/new-ui-app  mystore https://shop.example.com standard_user secret_sauce
 ```
 
-It prompts for the test URL, test user credentials (UI), and a Swagger/OpenAPI
-spec URL (API). Or pass everything as flags (CI-friendly, add `--yes`):
+`/new-api-app` scaffolds an API app (and generates a Service Object from a
+Swagger/OpenAPI spec); `/new-ui-app` scaffolds a UI app (home + login POM). Each
+command gathers the inputs, runs the generator, and verifies it (`tsc` +
+`npm run test:<name>`).
+
+Under the hood they drive the engine `scripts/new-app.mjs`, which you can also
+run directly (it prompts when given no flags; `--kind both` makes a combined app):
 
 ```bash
-npm run new:app -- mystore --kind ui  --url https://shop.example.com \
-  --username standard_user --password secret_sauce --yes
-npm run new:app -- petshop --kind api --swagger https://petstore.swagger.io/v2/swagger.json --yes
+node scripts/new-app.mjs petshop --kind api --swagger https://petstore.swagger.io/v2/swagger.json --yes
+node scripts/new-app.mjs mystore --kind ui --url https://shop.example.com --username u --password p --yes
+node scripts/new-app.mjs            # interactive prompts
 ```
 
-For each app it:
+For each app the generator:
 - creates `apps/<name>/` (config, POM/SOM, spec + BDD fixtures, example specs/features);
 - writes `apps/<name>/.env` (gitignored) + `.env.example` (committed) with `<NAME>_BASE_URL` and, when given, credentials;
 - registers it in `config/apps.ts` and adds `test:<name>` + `test:bdd:<name>` scripts;
@@ -160,6 +162,23 @@ For each app it:
 
 To add one by hand: copy `apps/_template`, set its `app.config.ts`, and add one
 import + array entry to `config/apps.ts`.
+
+## QA toolkit (Claude Code commands)
+
+An artifact-driven QA pipeline ships as slash commands — each phase produces a
+reviewable artifact, and the final phase generates real Playwright + `playwright-bdd`
+tests in `apps/<app>/`. Full guide: [docs/qa/README.md](docs/qa/README.md);
+automation conventions: [.claude/CLAUDE.md](.claude/CLAUDE.md).
+
+| Phase | UI | API | Output (per app) |
+|---|---|---|---|
+| Plan | `/plan-ui` | `/plan-api` | `docs/qa/<app>/TestPlan.md` |
+| Manual cases | `/manual-ui` | `/manual-api` | `docs/qa/<app>/TestCases.md` |
+| Automation plan | `/auto-plan-ui` | `/auto-plan-api` | `docs/qa/<app>/AutomationPlan.md` |
+| Automate | `/auto-ui` | `/auto-api` | code in `apps/<app>/` + `AutomationReport.md` |
+
+Review the artifact at each step before moving on. For a brand-new target,
+scaffold the app first with `/new-ui-app` or `/new-api-app`, then run the pipeline.
 
 ## Reports
 

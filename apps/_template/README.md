@@ -1,10 +1,13 @@
 # App template
 
-Skeleton for a new app under test. The fastest path is the scaffold script:
+Skeleton for a new app under test. The fastest path is a slash command:
 
-```bash
-npm run new:app -- <name> --kind ui|api|both --url <baseURL>
+```text
+/new-api-app <name> <swaggerUrl|baseUrl>      # API app
+/new-ui-app  <name> <baseUrl> [user] [pass]   # UI app
 ```
+
+(They drive `node scripts/new-app.mjs`, which also makes a `--kind both` app.)
 
 That copies this folder to `apps/<name>/`, fills in `app.config.ts`, prunes the
 dimension you don't need, and registers the app in `config/apps.ts`.

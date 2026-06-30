@@ -1,13 +1,10 @@
 #!/usr/bin/env node
-// Interactive (and scriptable) generator for a complete app testing setup.
+// Generator engine for a complete app testing setup. The entry points are the
+// Claude Code slash commands /new-api-app and /new-ui-app (see .claude/commands/);
+// they invoke this script. You can also run it directly:
 //
-// Interactive:
-//   npm run new:app
-//     -> prompts for name, kind, test URL, test user credentials (UI),
-//        and a Swagger/OpenAPI spec URL (API).
-//
-// Non-interactive (CI / scripted) — pass everything as flags (or add --yes):
-//   npm run new:app -- <name> --kind ui|api|both --url <baseURL> \
+//   node scripts/new-app.mjs                       # interactive prompts
+//   node scripts/new-app.mjs <name> --kind ui|api|both --url <baseURL> \
 //     [--username <u> --password <p>] [--swagger <specUrl>] [--yes]
 //
 // It generates apps/<name>/ with app.config.ts, POM/SOM, spec + BDD fixtures,

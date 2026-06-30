@@ -1,0 +1,29 @@
+# /auto-api
+
+Use `.claude/agents/automation-agent.md` in API mode. Manage state with
+`.claude/agents/workflow-agent.md`.
+
+Input:
+- `docs/qa/<app>/AutomationPlan.md`
+
+Goal:
+Implement the approved API automation in `apps/<app>/` and create
+`docs/qa/<app>/AutomationReport.md`.
+
+Rules:
+- Only implement approved items from `AutomationPlan.md`.
+- Reuse existing Service Objects (`som/*.api.ts`), schemas, fixtures, auth helpers, test data builders, and utilities in `apps/<app>/`.
+- Add new code only where the automation plan says it is needed.
+- Follow `.claude/CLAUDE.md` (SOM dual-style + decorators, fixtures registered in both `specs/fixtures.ts` and `steps/fixtures.ts`, relative paths with basePath on endpoints, auto-retrying assertions, tags).
+- Validate with `npx tsc --noEmit` and `npm run test:<app>` / `npm run test:bdd:<app>`; provide the run command and a summary.
+
+## Workflow protocol (run via `.claude/agents/workflow-agent.md`)
+
+Before implementing (START):
+1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
+2. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
+3. Read the input artifact: `docs/qa/<app>/AutomationPlan.md`.
+4. Validate: requires **Automation Planning = done** (prefer `approved`). If `AutomationPlan.md` is missing or the app isn't `automation-planned`, **stop** and tell the user to run `/auto-plan-api` first.
+
+After implementing (FINISH):
+5. Update `docs/qa/<app>/ProjectState.md` → `Current stage: automated` (Automation row `done`, timestamp, command), and add a History row noting the validation result.

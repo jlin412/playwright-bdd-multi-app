@@ -27,7 +27,7 @@ npm run test:bdd:ui                    # @ui scenarios
 npm run test:bdd:api                   # @api scenarios
 npm run test:bdd:regression            # includes @regression
 
-# Scope to one app (per-app shortcuts; new:app generates these)
+# Scope to one app (per-app shortcuts; the /new-*-app commands generate these)
 npm run test:<app>                     # spec smoke for one app
 npm run test:bdd:<app>                 # BDD for one app (via scripts/bdd.mjs)
 
@@ -41,10 +41,10 @@ npx playwright test apps/saucedemo
 npx playwright test --project=api-petstore
 npx playwright test -c playwright.bdd.config.ts --project=bdd-ui-saucedemo-webkit
 
-# Scaffold a new app (interactive wizard, or flags + --yes for CI)
-npm run new:app                        # prompts: name, kind, URL, creds, swagger URL
-npm run new:app -- <name> --kind ui|api|both --url <baseURL> \
-  [--username <u> --password <p>] [--swagger <specUrl>] [--yes]
+# Scaffold a new app under test (Claude Code slash commands)
+/new-api-app <name> <swaggerUrl|baseUrl>       # API app — SOM generated from the spec
+/new-ui-app  <name> <baseUrl> [user] [pass]    # UI app — home + login POM
+# engine (also runs `both`): node scripts/new-app.mjs <name> --kind ui|api|both --url <baseURL> [--swagger <url>] --yes
 
 # Interactive / debug
 npm run debug:ui                       # Playwright Test UI (spec style)
@@ -123,10 +123,27 @@ edit by hand. The `test:bdd*` scripts run it automatically.
 
 ## Adding an app
 
-`npm run new:app -- <name> --kind ui|api|both --url <baseURL>` copies `apps/_template`,
-fills `app.config.ts`, prunes the unused dimension, writes kind-appropriate
-fixtures/feature, and registers the app in `config/apps.ts`. `apps/_template` is
-excluded from runs (`testIgnore`) but must still type-check.
+Use the Claude Code slash commands — `/new-api-app <name> <swaggerUrl|baseUrl>`
+or `/new-ui-app <name> <baseUrl> [user] [pass]` (see `.claude/commands/`). They
+drive the engine `scripts/new-app.mjs`, which copies `apps/_template`, fills
+`app.config.ts`, prunes the unused dimension, writes kind-appropriate
+fixtures/feature, writes `apps/<name>/.env` + `.env.example`, registers the app
+in `config/apps.ts`, and adds `test:<name>` / `test:bdd:<name>` scripts. Run the
+engine directly for a combined app: `node scripts/new-app.mjs <name> --kind both …`.
+`apps/_template` is excluded from runs (`testIgnore`) but must still type-check.
+
+## QA toolkit (Claude Code commands — v6)
+
+An artifact-driven QA pipeline ships as slash commands; each phase produces a
+reviewable artifact, and the last phase generates real automation code. See
+[docs/qa/README.md](docs/qa/README.md). Automation conventions the commands
+follow live in [`.claude/CLAUDE.md`](.claude/CLAUDE.md) (filled in for this repo).
+
+- **Pipeline** (UI / API): `/plan-ui`·`/plan-api` → `/manual-ui`·`/manual-api` → `/auto-plan-ui`·`/auto-plan-api` → `/auto-ui`·`/auto-api`. `/bootstrap` (re)generates `.claude/CLAUDE.md`.
+- Backed by 5 subagents (`.claude/agents/`, incl. the internal `workflow-agent`) and 6 templates (`.claude/templates/`).
+- **State machine**: every command reads/updates `docs/qa/<app>/ProjectState.md` via `.claude/agents/workflow-agent.md` — it validates phase order (refuses out-of-order runs) and records stage/history. Commit `ProjectState.md` with the artifacts; it's the per-app carry-forward between phases/sessions.
+- Artifacts are written **per app** under `docs/qa/<app>/` (`TestPlan` → `TestCases` → `AutomationPlan` → `AutomationReport` + `Traceability` + `ProjectState`); `/auto-*` writes code into `apps/<app>/`.
+- **Scaffold a new app under test** with `/new-ui-app` / `/new-api-app` (kept from the scaffolder; engine `scripts/new-app.mjs`), then run the pipeline to fill in tests.
 
 ## Conventions
 
