@@ -4,6 +4,9 @@ import { apps } from './config/apps';
 import { deviceKey } from './lib/app-config';
 
 const smokeOnly = process.env.SMOKE_ONLY === '1';
+// @triage repro specs (executed manual cases that currently fail) are never part of
+// smoke or regression. Run them on demand with TRIAGE=1 (npm run test:triage).
+const triageOnly = process.env.TRIAGE === '1';
 
 // Spec-style projects are generated from the app registry (config/apps.ts).
 // Per-app base URL flows through use.baseURL; POM/SOM keep relative navigation.
@@ -31,6 +34,10 @@ const projects: Project[] = apps.flatMap((app) => {
 
 export default defineConfig({
   testDir: '.',
+  // @triage tests carry "@triage" in their title: excluded from every normal run
+  // (smoke + regression), and are the only thing that runs when TRIAGE=1.
+  grep: triageOnly ? /@triage/ : undefined,
+  grepInvert: triageOnly ? undefined : /@triage/,
   // Smoke runs exclude long multi-step workflow specs, intentional-fail specs,
   // and the copyable template skeleton.
   testIgnore: [

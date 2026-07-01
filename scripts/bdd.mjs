@@ -15,8 +15,8 @@
 //
 // Tag generation rules (what bddgen compiles):
 //   --tags given        -> that expression
-//   --feature, no --tags-> "not @tracefail"            (so any feature is available)
-//   neither             -> "@smoke and not @tracefail" (the default smoke set)
+//   --feature, no --tags-> "not @tracefail and not @triage"            (any feature, minus triage)
+//   neither             -> "@smoke and not @tracefail and not @triage" (the default smoke set)
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -48,7 +48,7 @@ function run(cmd, args) {
 
 const { app, feature, tags, passthrough } = parse(process.argv.slice(2));
 
-const genTags = tags ?? (feature ? 'not @tracefail' : '@smoke and not @tracefail');
+const genTags = tags ?? (feature ? 'not @tracefail and not @triage' : '@smoke and not @tracefail and not @triage');
 
 const featureName = feature ? feature.replace(/\.feature$/, '') : undefined;
 const filters = [];

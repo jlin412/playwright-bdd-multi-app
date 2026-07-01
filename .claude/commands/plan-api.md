@@ -18,7 +18,8 @@ Create `docs/qa/<app>/TestPlan.md`.
 
 Rules:
 - Identify endpoints, resources, auth, roles, data models, and risks.
-- List manual API test cases that need to be created.
+- List manual API test cases that need to be created; give each a stable `TC-<AREA><NN>` ID.
+- Design from the spec/inputs and testing knowledge — do not call the live API (execution happens in `/manual-api`).
 - Do not create detailed request payloads unless needed for planning.
 - Do not write automation code.
 

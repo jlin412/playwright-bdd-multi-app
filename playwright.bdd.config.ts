@@ -46,7 +46,7 @@ const projects: Project[] = apps.flatMap((app) => {
 });
 
 export default defineConfig({
-  grepInvert: smokeOnly ? /@tracefail|@fail/ : undefined,
+  grepInvert: smokeOnly ? /@tracefail|@fail|@triage/ : undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
