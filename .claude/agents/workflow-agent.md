@@ -17,8 +17,8 @@ pipeline commands call this agent at the **start** (read + validate) and **end**
 |---|---|---|---|---|
 | 0 | `not-started` | — | — | — |
 | 1 | `planned` | `/plan-ui`, `/plan-api` | the target | `docs/qa/<app>/TestPlan.md` |
-| 2 | `manual-designed` | `/manual-ui`, `/manual-api` | `TestPlan.md` | `docs/qa/<app>/TestCases.md` (+ `Traceability.md`) |
-| 3 | `automation-planned` | `/auto-plan-ui`, `/auto-plan-api` | `TestCases.md` | `docs/qa/<app>/AutomationPlan.md` |
+| 2 | `manual-designed` | `/manual-ui`, `/manual-api` | `TestPlan.md` | `docs/qa/<app>/TestCases.md` + `TestExecution.md` (+ `Traceability.md`) |
+| 3 | `automation-planned` | `/auto-plan-ui`, `/auto-plan-api` | `TestCases.md` + `TestExecution.md` | `docs/qa/<app>/AutomationPlan.md` |
 | 4 | `automated` | `/auto-ui`, `/auto-api` | `AutomationPlan.md` | code in `apps/<app>/` + `docs/qa/<app>/AutomationReport.md` |
 
 ## START protocol (read + validate) — every command runs this first

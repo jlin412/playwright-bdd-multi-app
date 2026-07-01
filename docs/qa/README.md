@@ -15,7 +15,7 @@ Repository conventions the automation commands follow live in
 | Phase | UI | API | Output (per app) |
 |---|---|---|---|
 | 1. Planning | `/plan-ui` | `/plan-api` | `docs/qa/<app>/TestPlan.md` |
-| 2. Manual design | `/manual-ui` | `/manual-api` | `docs/qa/<app>/TestCases.md` (+ `Traceability.md`) |
+| 2. Manual design + run | `/manual-ui` | `/manual-api` | `docs/qa/<app>/TestCases.md` + `TestExecution.md` (+ `Traceability.md`) |
 | 3. Automation planning | `/auto-plan-ui` | `/auto-plan-api` | `docs/qa/<app>/AutomationPlan.md` |
 | 4. Automation impl. | `/auto-ui` | `/auto-api` | code in `apps/<app>/` + `docs/qa/<app>/AutomationReport.md` |
 
@@ -42,7 +42,7 @@ with the artifacts so any session sees exactly where each app stands.
 
 ```text
 /plan-ui  <url|story|app>        →  review docs/qa/<app>/TestPlan.md
-/manual-ui docs/qa/<app>/TestPlan.md    →  review TestCases.md
+/manual-ui docs/qa/<app>/TestPlan.md    →  runs cases live → review TestCases.md + TestExecution.md
 /auto-plan-ui docs/qa/<app>/TestCases.md →  review AutomationPlan.md
 /auto-ui  docs/qa/<app>/AutomationPlan.md →  review the code + AutomationReport.md
 ```
@@ -61,6 +61,15 @@ pipeline to fill in tests:
 
 ## Design principle
 
-Each command has one job: `/plan-*` decides *what* to test, `/manual-*` explains
-*how* to test it manually, `/auto-plan-*` decides *how automation is implemented*,
-and `/auto-*` writes code from the **approved** plan only.
+Each command has one job, mirroring a real manual-then-automate QA process:
+`/plan-*` decides *what* to test (from supplied context + a passive structure-only
+scan + knowledge — no behavioral recon),
+`/manual-*` **runs** the cases live and records how they behave (steps, intended vs
+actual result, defects), `/auto-plan-*` decides *how automation is implemented*, and
+`/auto-*` transcribes the executed cases into tests aligned 1:1 with them (every test
+carries its `TC-*` ID; assertions reuse the intended expected value verbatim).
+
+Failed cases are still automated — as `@triage` **reproduction** tests that assert the
+intended result (so they fail = an easy replay with a trace). `@triage` is excluded
+from both `@smoke` and `@regression`; run it on demand with `npm run test:triage` /
+`npm run test:bdd:triage`.

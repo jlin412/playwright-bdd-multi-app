@@ -12,9 +12,12 @@ Implement the approved UI automation in `apps/<app>/` and create
 
 Rules:
 - Only implement approved items from `AutomationPlan.md`.
+- **Transcribe, don't invent**: assertions use the **intended** expected values from `TestCases.md` verbatim; carry each `TC-*` ID into the test/scenario title so every test traces to a manual case (no orphans).
+- `fail` cases → `@triage` reproduction tests that assert the *intended* result (expected to fail = the repro); `@triage` is excluded from smoke/regression and runs via `npm run test:triage` / `npm run test:bdd:triage`. Do not also tag them `@smoke`/`@regression`.
 - Reuse existing feature files, step decorators, Page Objects, fixtures, utilities, and selectors in `apps/<app>/`.
 - Add new code only where the automation plan says it is needed.
 - Follow `.claude/CLAUDE.md` (POM dual-style + decorators, fixtures registered in both `specs/fixtures.ts` and `steps/fixtures.ts`, `getByRole`/`getByTestId` locators, `@Then … should`, tags).
+- Update `docs/qa/<app>/Traceability.md` with each case's automation status + file.
 - Validate with `npx tsc --noEmit` and `npm run test:<app>` / `npm run test:bdd:<app>`; provide the run command and a summary.
 
 ## Workflow protocol (run via `.claude/agents/workflow-agent.md`)
