@@ -99,26 +99,26 @@ Do not skip checkpoints. `/auto-*` writes code **only** from the approved
 Before running any QA workflow command, read the relevant knowledge files.
 
 UI commands:
-- `.claude/knowledge/ui-testing.md`
-- `.claude/knowledge/security-testing.md`
-- `.claude/knowledge/accessibility-testing.md`
-- `.claude/knowledge/performance-testing.md`
+- `.claude/knowledges/ui-testing.md`
+- `.claude/knowledges/security-testing.md`
+- `.claude/knowledges/accessibility-testing.md`
+- `.claude/knowledges/performance-testing.md`
 
 API commands:
-- `.claude/knowledge/api-testing.md`
-- `.claude/knowledge/security-testing.md`
-- `.claude/knowledge/performance-testing.md`
+- `.claude/knowledges/api-testing.md`
+- `.claude/knowledges/security-testing.md`
+- `.claude/knowledges/performance-testing.md`
 
 Mobile commands:
-- `.claude/knowledge/mobile-testing.md`
-- `.claude/knowledge/security-testing.md`
-- `.claude/knowledge/accessibility-testing.md`
-- `.claude/knowledge/performance-testing.md`
+- `.claude/knowledges/mobile-testing.md`
+- `.claude/knowledges/security-testing.md`
+- `.claude/knowledges/accessibility-testing.md`
+- `.claude/knowledges/performance-testing.md`
 
 IoT commands:
-- `.claude/knowledge/iot-testing.md`
-- `.claude/knowledge/api-testing.md`
-- `.claude/knowledge/security-testing.md`
-- `.claude/knowledge/performance-testing.md`
+- `.claude/knowledges/iot-testing.md`
+- `.claude/knowledges/api-testing.md`
+- `.claude/knowledges/security-testing.md`
+- `.claude/knowledges/performance-testing.md`
 
 Use these files as checklists for planning, manual test generation, automation planning, and coverage gap analysis.

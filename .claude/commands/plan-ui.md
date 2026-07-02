@@ -40,7 +40,7 @@ Rules:
 
 Before planning (START):
 1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read the UI knowledge files: `.claude/knowledge/ui-testing.md`, `.claude/knowledge/security-testing.md`, `.claude/knowledge/accessibility-testing.md`, `.claude/knowledge/performance-testing.md`. Use them as checklists to avoid missing test areas.
+2. Read the UI knowledge files: `.claude/knowledges/ui-testing.md`, `.claude/knowledges/security-testing.md`, `.claude/knowledges/accessibility-testing.md`, `.claude/knowledges/performance-testing.md`. Use them as checklists to avoid missing test areas.
 3. Read `docs/qa/<app>/ProjectState.md` (create it from `.claude/templates/ProjectState.md` if missing; set `Mode: ui`, `Target`).
 3. Input: the provided target — Planning is the entry stage, so no prior artifact is required.
 5. Validate: if the app is already past `planned`, warn that re-planning marks Manual/Automation `stale`.

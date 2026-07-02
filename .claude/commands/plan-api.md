@@ -27,7 +27,7 @@ Rules:
 
 Before planning (START):
 1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read the API knowledge files: `.claude/knowledge/api-testing.md`, `.claude/knowledge/security-testing.md`, `.claude/knowledge/performance-testing.md`. Use them as checklists to avoid missing test areas.
+2. Read the API knowledge files: `.claude/knowledges/api-testing.md`, `.claude/knowledges/security-testing.md`, `.claude/knowledges/performance-testing.md`. Use them as checklists to avoid missing test areas.
 3. Read `docs/qa/<app>/ProjectState.md` (create it from `.claude/templates/ProjectState.md` if missing; set `Mode: api`, `Target`).
 4. Input: the provided spec/target — Planning is the entry stage, so no prior artifact is required.
 5. Validate: if the app is already past `planned`, warn that re-planning marks Manual/Automation `stale`.

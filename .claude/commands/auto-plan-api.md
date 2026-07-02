@@ -24,7 +24,7 @@ Rules:
 
 Before planning automation (START):
 1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read the API knowledge files: `.claude/knowledge/api-testing.md`, `.claude/knowledge/security-testing.md`, `.claude/knowledge/performance-testing.md`. Use them to identify coverage gaps and assess automation candidacy.
+2. Read the API knowledge files: `.claude/knowledges/api-testing.md`, `.claude/knowledges/security-testing.md`, `.claude/knowledges/performance-testing.md`. Use them to identify coverage gaps and assess automation candidacy.
 3. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
 4. Read the input artifacts: `docs/qa/<app>/TestCases.md` and `docs/qa/<app>/TestExecution.md`.
 5. Validate: requires **Manual Design = done**. If `TestCases.md`/`TestExecution.md` are missing or the app isn't `manual-designed`, **stop** and tell the user to run `/manual-api` first.

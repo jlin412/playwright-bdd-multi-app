@@ -22,7 +22,7 @@ Rules:
 
 Before designing (START):
 1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read the UI knowledge files: `.claude/knowledge/ui-testing.md`, `.claude/knowledge/security-testing.md`, `.claude/knowledge/accessibility-testing.md`, `.claude/knowledge/performance-testing.md`. Use them to expand planned tests into thorough manual cases.
+2. Read the UI knowledge files: `.claude/knowledges/ui-testing.md`, `.claude/knowledges/security-testing.md`, `.claude/knowledges/accessibility-testing.md`, `.claude/knowledges/performance-testing.md`. Use them to expand planned tests into thorough manual cases.
 3. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
 4. Read the input artifact: `docs/qa/<app>/TestPlan.md`.
 5. Validate: requires **Planning = done**. If `TestPlan.md` is missing or the app isn't `planned`, **stop** and tell the user to run `/plan-ui` first.
