@@ -167,24 +167,97 @@ For each app the generator:
 To add one by hand: copy `apps/_template`, set its `app.config.ts`, and add one
 import + array entry to `config/apps.ts`.
 
-## QA toolkit (Claude Code commands)
+## QA Toolkit v3
 
-An artifact-driven QA pipeline ships as slash commands — each phase produces a
-reviewable artifact, and the final phase generates real Playwright + `playwright-bdd`
-tests in `apps/<app>/`. Full guide: [docs/qa/README.md](docs/qa/README.md);
-automation conventions: [.claude/CLAUDE.md](.claude/CLAUDE.md).
+An **AI-native QA engineering toolkit** ships as Claude Code slash commands. Claude is the
+intelligence; the repository is the workflow engine; **artifacts are the source of truth**.
+Every stage writes durable files under `artifacts/<feature>/`, so work can be reviewed,
+edited, approved, versioned, and resumed later — **chat history is never required**.
 
 ![Agentic QA artifact-driven automation pipeline overview](docs/images/Agentic_QA_Automation_Pipeline_Overview.png)
 
-| Phase | UI | API | Output (per app) |
-|---|---|---|---|
-| Plan | `/plan-ui` | `/plan-api` | `docs/qa/<app>/TestPlan.md` |
-| Manual cases | `/manual-ui` | `/manual-api` | `docs/qa/<app>/TestCases.md` |
-| Automation plan | `/auto-plan-ui` | `/auto-plan-api` | `docs/qa/<app>/AutomationPlan.md` |
-| Automate | `/auto-ui` | `/auto-api` | code in `apps/<app>/` + `AutomationReport.md` |
+### Architecture (layers)
 
-Review the artifact at each step before moving on. For a brand-new target,
-scaffold the app first with `/new-ui-app` or `/new-api-app`, then run the pipeline.
+Reusable expertise is separated from repo-specific memory so the toolkit is portable:
+
+| Layer | Path | Role |
+|---|---|---|
+| **Commands** | `.claude/commands/` | Thin launchers — orchestration only |
+| **Skills** | `.claude/skills/` | Reusable QA methodology (`qa-planning`, `qa-manual-design`, `qa-automation-plan`, `qa-automation`, `qa-triage`, `qa-workflow`) |
+| **Checklists** | `.claude/checklists/` | Single-source coverage gates + review checklists |
+| **Templates** | `.claude/templates/` | Artifact skeletons (`.md` + `.yaml`) |
+| **Project Memory** | `.claude/project/` | This repo's conventions + stack (the only per-repo layer) |
+| **Workflow** | `.claude/workflow/` | The six-stage lifecycle + state-derivation rules |
+| **Artifacts** | `artifacts/<feature>/` | The durable source of truth (outside `.claude/`) |
+
+Each skill has a paired subagent in `.claude/agents/` for separate-context delegation.
+Portable layers (skills / checklists / templates / workflow) can be lifted into another
+repo unchanged; only `.claude/project/` is rewritten (`/bootstrap` regenerates it).
+
+### Workflow & review process
+
+```
+Planning → review → Manual Testing → review → Automation → review → Execution → Analysis → Improvement
+```
+
+Each stage produces a reviewable artifact and advances only past **human approval**:
+
+| Stage | Command (UI · API) | Artifact(s) |
+|---|---|---|
+| Planning | `/plan-ui` · `/plan-api` | `plan.md` + `plan.yaml` |
+| Manual Testing | `/manual-ui` · `/manual-api` | `manual.md` + `manual.yaml` + `execution.md` |
+| Automation (design) | `/auto-plan-ui` · `/auto-plan-api` | `automation.md` (Part A) + `automation.yaml` |
+| Automation (impl.) | `/auto-ui` · `/auto-api` | `automation.md` (Part B) + code in `apps/<app>/` |
+| Execution | `npm run test:<feature>` … | `execution.md` |
+| Failure Analysis | (`qa-triage`) | `bugs.md` |
+| Improvement | — | `history.md` |
+
+**Review commands** operate purely on the artifacts: `/status` (current stage, blockers,
+next command — all derived from files), `/review` (assess against the review checklist →
+`in-review`), `/approve` (→ `approved`), `/revise` (→ `draft`, bumps version), `/history`.
+A stage moves `draft → in-review → approved`; a `fail` case becomes a `@triage`
+reproduction test (out of smoke/regression) logged in `bugs.md`.
+
+### Artifacts & metadata
+
+One folder per QA work unit (`<feature>` = an app like `petstore`, or a feature slug).
+Gated stages carry a YAML sidecar (`status`, `owner`, `created`/`updated`, `version`,
+`depends_on`, `next_stage`, `approved_by`, `approval_date`) from which workflow **state is
+derived** — there is no separate state file. See [artifacts/README.md](artifacts/README.md);
+[`artifacts/petstore/`](artifacts/petstore/) is a complete worked example.
+
+### Example run
+
+```text
+/plan-api https://petstore.swagger.io/v2/swagger.json   # → artifacts/petstore/plan.md
+/review petstore  →  /approve petstore
+/manual-api petstore     # runs cases live → manual.md + execution.md
+/review petstore  →  /approve petstore
+/auto-plan-api petstore  →  review → approve
+/auto-api petstore       # writes code in apps/petstore/ + automation.md
+/status petstore         # where am I? what's next?
+```
+
+For a brand-new target, scaffold first with `/new-ui-app` or `/new-api-app`, then run the
+pipeline. Deeper detail lives in each layer's `README` and
+[`.claude/workflow/pipeline.md`](.claude/workflow/pipeline.md).
+
+### Migration from v6 (`docs/qa/`)
+
+The earlier toolkit stored per-app docs under `docs/qa/<app>/`. v3 replaces that with the
+metadata-driven `artifacts/<feature>/` model:
+
+| v6 `docs/qa/<app>/` | v3 `artifacts/<feature>/` |
+|---|---|
+| `TestPlan.md` | `plan.md` + `plan.yaml` |
+| `TestCases.md` | `manual.md` + `manual.yaml` |
+| `TestExecution.md` | `execution.md` |
+| `AutomationPlan.md` + `AutomationReport.md` + `Traceability.md` | `automation.md` + `automation.yaml` |
+| `ProjectState.md` | derived from the YAML sidecars (+ `history.md`) |
+
+Knowledge previously duplicated across `.claude/knowledges/*` now lives once in
+`.claude/checklists/`; automation conventions moved from `.claude/CLAUDE.md` to
+`.claude/project/`.
 
 ## Reports
 

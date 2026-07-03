@@ -1,0 +1,18 @@
+# Metadata sidecar for automation.md (covers both design and implementation).
+stage: automation
+status: draft                 # draft | in-review | approved | rejected | blocked | stale
+substage: planned             # planned (after /auto-plan-*) | implemented (after /auto-*)
+owner: unassigned
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
+version: 1
+depends_on: [manual]
+next_stage: execution
+approved_by:
+approval_date:
+
+# Set after implementation:
+validation:
+  tsc: <pass|fail|not-run>
+  tests: <command run>
+  result: <summary>

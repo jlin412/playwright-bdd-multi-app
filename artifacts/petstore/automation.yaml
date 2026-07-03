@@ -1,0 +1,15 @@
+stage: automation
+status: approved
+substage: implemented
+owner: migrated
+created: 2026-06-30
+updated: 2026-06-30
+version: 1
+depends_on: [manual]
+next_stage: execution
+approved_by: migrated-from-v6-ProjectState
+approval_date: 2026-06-30
+validation:
+  tsc: pass
+  tests: npm run test:petstore ; npm run test:bdd:petstore
+  result: 24 spec passed; 6 BDD smoke + 5 regression passed

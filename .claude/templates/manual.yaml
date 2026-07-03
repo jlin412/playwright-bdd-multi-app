@@ -1,0 +1,20 @@
+# Metadata sidecar for manual.md (paired with execution.md for the live run log).
+stage: manual
+status: draft                 # draft | in-review | approved | rejected | blocked | stale
+owner: unassigned
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
+version: 1
+depends_on: [planning]
+next_stage: automation
+approved_by:
+approval_date:
+
+# Latest run summary (from execution.md):
+run:
+  date: <YYYY-MM-DD>
+  pass: 0
+  fail: 0
+  blocked: 0
+  not_run: 0
+  triage: 0

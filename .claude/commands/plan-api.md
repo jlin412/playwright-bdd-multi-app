@@ -1,36 +1,14 @@
 # /plan-api
 
-Use `.claude/agents/planning-agent.md` in API mode. Manage state with
-`.claude/agents/workflow-agent.md`.
+Launch the **Planning** phase in **API mode**.
 
-Input may be:
-- Swagger/OpenAPI URL
-- `openapi.json`
-- `swagger.yaml`
-- backend routes/controllers
-- API requirements
+Input `$ARGUMENTS`: a Swagger/OpenAPI URL, `openapi.json`, `swagger.yaml`, backend
+routes/controllers, or API requirements (plus any supplied context).
 
-First determine the target app `<app>` (the `apps/<name>/` folder, or a slug for
-a brand-new target).
+1. Resolve `<feature>` (an `apps/<name>/` folder name, or a slug for a new target).
+2. Run the **qa-planning** skill in **API mode**. It runs the qa-workflow START/FINISH
+   protocol, reads the API checklists (`core-api`, `security`, `performance`), and writes
+   `artifacts/<feature>/plan.md` + `plan.yaml`. Design from the spec — do not call the
+   live API (execution happens in `/manual-api`).
 
-Goal:
-Create `docs/qa/<app>/TestPlan.md`.
-
-Rules:
-- Identify endpoints, resources, auth, roles, data models, and risks.
-- List manual API test cases that need to be created; give each a stable `TC-<AREA><NN>` ID.
-- Design from the spec/inputs and testing knowledge — do not call the live API (execution happens in `/manual-api`).
-- Do not create detailed request payloads unless needed for planning.
-- Do not write automation code.
-
-## Workflow protocol (run via `.claude/agents/workflow-agent.md`)
-
-Before planning (START):
-1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read the API knowledge files: `.claude/knowledges/api-testing.md`, `.claude/knowledges/security-testing.md`, `.claude/knowledges/performance-testing.md`. Use them as checklists to avoid missing test areas.
-3. Read `docs/qa/<app>/ProjectState.md` (create it from `.claude/templates/ProjectState.md` if missing; set `Mode: api`, `Target`).
-4. Input: the provided spec/target — Planning is the entry stage, so no prior artifact is required.
-5. Validate: if the app is already past `planned`, warn that re-planning marks Manual/Automation `stale`.
-
-After planning (FINISH):
-6. Update `docs/qa/<app>/ProjectState.md` → `Current stage: planned` (Planning row `done`, timestamp, command), add a History row, and mark later stages `stale` if they had output.
+Then review: `/review <feature>` → `/approve <feature>` before `/manual-api`.

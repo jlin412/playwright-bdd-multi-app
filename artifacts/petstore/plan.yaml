@@ -1,0 +1,12 @@
+stage: planning
+status: approved
+owner: migrated
+created: 2026-06-30
+updated: 2026-06-30
+version: 1
+depends_on: []
+next_stage: manual
+approved_by: migrated-from-v6-ProjectState
+approval_date: 2026-06-30
+mode: api
+target: https://petstore.swagger.io/
