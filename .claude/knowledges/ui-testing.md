@@ -1,128 +1,18 @@
-# UI Testing Knowledge
+# Moved → `.claude/checklists/`
 
-Use this checklist for UI planning, manual test design, and automation planning.
+Refactored in **QA Toolkit v3**. Domain coverage lists are now single-source
+**checklists** (de-duplicated: security / accessibility / performance are no longer
+copied per domain).
 
-## Core Functional Areas
-- Authentication
-- Authorization
-- User roles
-- Navigation
-- Menus
-- Routing
-- Deep links
-- Forms
-- Required fields
-- Optional fields
-- Input validation
-- Boundary values
-- Special characters
-- Duplicate submission
-- CRUD flows
-- Search
-- Filtering
-- Sorting
-- Pagination
-- Tables
-- Data grids
-- Dashboards
-- Reports
-- Export
-- Import
-- File upload
-- File download
-- Modals
-- Popups
-- Toast messages
-- Tooltips
-- Wizards
-- Multi-step flows
-- Date picker
-- Time picker
-- Calendar
-- Rich text editor
-- Profile
-- Settings
-- Notifications
-- Email triggers
-- Audit trail
-- Error handling
-- Empty states
-- Loading states
-- Success states
-- Cancel flows
-- Retry flows
+UI coverage now lives across:
 
-## Session Testing
-- Login
-- Logout
-- Session timeout
-- Refresh page
-- Browser back/forward
-- Multiple tabs
-- Remember me
-- Token expiration
-- Forced logout
-- Concurrent sessions
+- [`checklists/core-ui.md`](../checklists/core-ui.md) — UI functional areas
+- [`checklists/security.md`](../checklists/security.md)
+- [`checklists/accessibility.md`](../checklists/accessibility.md)
+- [`checklists/performance.md`](../checklists/performance.md)
 
-## UI Negative Testing
-- Blank inputs
-- Invalid formats
-- Max length
-- Min length
-- Unsupported characters
-- Invalid file type
-- Large file size
-- Duplicate records
-- Unauthorized access
-- Broken navigation
-- Slow response
-- Interrupted operation
+Per-phase "how to use these" guidance now lives in the Skills (`.claude/skills/`).
 
-## Browser and Device Coverage
-- Chrome
-- Firefox
-- Safari
-- Edge
-- Desktop
-- Tablet
-- Mobile browser
-- Responsive layouts
-- Different screen sizes
-- Zoom levels
-
-## Accessibility
-- Keyboard navigation
-- Focus order
-- Screen reader labels
-- ARIA attributes
-- Color contrast
-- Error message association
-- Form labels
-- Skip links
-- Modal focus trap
-- Accessible buttons and links
-
-## Security
-- Hidden UI controls
-- Direct URL access
-- Role-based access
-- Cross-user data access
-- XSS input
-- CSRF-sensitive flows
-- Sensitive data masking
-- Logout invalidates session
-
-## Performance and Reliability
-- Slow network
-- Large data set
-- Rapid clicks
-- Double submit
-- Long-running operation
-- Browser refresh during action
-- Recovery after failure
-- Client-side caching issues
-
-## Manual Test Output Guidance
-For planning, list test scenarios only.
-For manual test cases, include preconditions, test data, steps, expected results, priority, risk, and automation candidate.
-For automation planning, decide existing feature vs new feature, reusable steps, Page Objects, fixtures, locators, and tags.
+> Do not add coverage here — update the checklist instead. This stub exists only for
+> backward compatibility and will be removed once all references point at
+> `.claude/checklists/`.

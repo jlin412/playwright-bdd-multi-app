@@ -1,55 +1,9 @@
-# Mobile Testing Knowledge
+# Moved → `.claude/checklists/mobile.md`
 
-Use this checklist for mobile app planning and manual testing.
+Refactored in **QA Toolkit v3**. Mobile coverage now lives at:
 
-## Core Areas
-- Installation
-- Upgrade
-- Uninstall
-- Reinstall
-- Login/logout
-- Biometrics
-- Permissions
-- Push notifications
-- Deep links
-- Offline mode
-- Sync
-- Settings
-- Profile
-- Forms
-- Search
-- Upload
-- Camera
-- Location
-- Bluetooth
-- Background/foreground
-- Force close/reopen
+- [`checklists/mobile.md`](../checklists/mobile.md)
 
-## Device Coverage
-- iOS
-- Android
-- Phones
-- Tablets
-- Small screens
-- Large screens
-- Different OS versions
-
-## Network
-- Wi-Fi
-- Cellular
-- Airplane mode
-- Weak signal
-- Network switching
-- Offline recovery
-
-## Interruptions
-- Phone call
-- SMS
-- Alarm
-- Low battery
-- App update
-- Notification while in flow
-
-## Output Guidance
-Planning should identify device/OS coverage and risk.
-Manual test cases should include app lifecycle, permissions, network, and notification checks.
+> Do not add coverage here — update the checklist instead. This stub exists only for
+> backward compatibility and will be removed once all references point at
+> `.claude/checklists/`.
