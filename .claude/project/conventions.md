@@ -60,5 +60,5 @@ created/modified.
 
 ## Review gate
 
-Do not skip checkpoints. `/auto-*` writes code **only** from the approved
-`AutomationPlan.md`.
+Do not skip checkpoints. `/auto-*` writes code **only** from the approved automation plan
+(`artifacts/<feature>/automation.md` Part A).

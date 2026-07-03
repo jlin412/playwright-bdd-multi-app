@@ -132,55 +132,34 @@ in `config/apps.ts`, and adds `test:<name>` / `test:bdd:<name>` scripts. Run the
 engine directly for a combined app: `node scripts/new-app.mjs <name> --kind both …`.
 `apps/_template` is excluded from runs (`testIgnore`) but must still type-check.
 
-## QA toolkit (Claude Code commands — v6)
+## QA Toolkit v3 (Claude Code commands)
 
-An artifact-driven QA pipeline ships as slash commands; each phase produces a
-reviewable artifact, and the last phase generates real automation code. See
-[docs/qa/README.md](docs/qa/README.md). Automation conventions the commands
-follow live in [`.claude/CLAUDE.md`](.claude/CLAUDE.md) (filled in for this repo).
+An AI-native, artifact-driven QA toolkit ships as slash commands. Each lifecycle stage
+produces a durable, reviewable artifact under `artifacts/<feature>/`; the final stage
+generates real automation code in `apps/<app>/`. Overview + migration guide: `README.md`
+§ "QA Toolkit v3". Layers:
 
-- **Pipeline** (UI / API): `/plan-ui`·`/plan-api` → `/manual-ui`·`/manual-api` → `/auto-plan-ui`·`/auto-plan-api` → `/auto-ui`·`/auto-api`. `/bootstrap` (re)generates `.claude/CLAUDE.md`.
-- Backed by 5 subagents (`.claude/agents/`, incl. the internal `workflow-agent`) and 6 templates (`.claude/templates/`).
-- **State machine**: every command reads/updates `docs/qa/<app>/ProjectState.md` via `.claude/agents/workflow-agent.md` — it validates phase order (refuses out-of-order runs) and records stage/history. Commit `ProjectState.md` with the artifacts; it's the per-app carry-forward between phases/sessions.
-- Artifacts are written **per app** under `docs/qa/<app>/` (`TestPlan` → `TestCases` → `AutomationPlan` → `AutomationReport` + `Traceability` + `ProjectState`); `/auto-*` writes code into `apps/<app>/`.
-- **Scaffold a new app under test** with `/new-ui-app` / `/new-api-app` (kept from the scaffolder; engine `scripts/new-app.mjs`), then run the pipeline to fill in tests.
+- **Commands** (`.claude/commands/`) — thin launchers (orchestration only).
+- **Skills** (`.claude/skills/`) — reusable QA methodology (`qa-planning`, `qa-manual-design`, `qa-automation-plan`, `qa-automation`, `qa-triage`, `qa-workflow`); each has a paired subagent in `.claude/agents/`.
+- **Checklists** (`.claude/checklists/`) — single-source coverage + review gates.
+- **Templates** (`.claude/templates/`) — artifact skeletons (`.md` + `.yaml`).
+- **Project Memory** (`.claude/project/`) — this repo's conventions + stack.
+- **Workflow** (`.claude/workflow/`) — the six-stage lifecycle + state-derivation rules.
+- **Artifacts** (`artifacts/<feature>/`) — the durable source of truth.
+
+Pipeline: `/plan-*` → `/manual-*` → `/auto-plan-*` → `/auto-*`, with `/review` → `/approve`
+gates between; `/status`, `/revise`, `/history` operate on the artifacts. Workflow state is
+**derived from the per-stage YAML sidecars** — no chat history required to resume.
+`/bootstrap` regenerates `.claude/project/`. Scaffold a new target with `/new-ui-app` /
+`/new-api-app`, then run the pipeline.
 
 ## Conventions
 
-### BDD file naming
-
-Files in `apps/<name>/features/` and `apps/<name>/steps/` are **named by
-behavior/functionality**, never by workflow letter. `steps/` holds only
-`fixtures.ts`, `hooks.ts`, and cross-fixture orchestration step files (e.g.
-`checkout-setup.steps.ts`). Single-fixture steps live as decorators on the POM class.
-
-### POM structure (three sections)
-
-Each POM is organized as (see `apps/yosemitecinema/pom/auth.page.ts` for the reference):
-
-```
-// ── Assertions ──────────────  → non-decorated expectXxx() helpers
-// ── Actions ─────────────────  → non-decorated action helpers (goto, click, fill…)
-// ── BDD step decorators ─────  → @Given/@When/@Then methods that are thin wrappers
-```
-
-- Action helpers **may include action-confirmation assertions** about the element being acted on. By design.
-- Test-case-logic assertions (what the scenario verifies) belong in a separate `@Then` calling an `expectXxx()` helper.
-- Specs consume the non-decorated helpers directly — keep that API surface stable.
-
-### BDD step text style
-
-Behavior/intention-driven, not click-by-click. Prefer `When I log in as a member`
-over three granular steps. All `@Then` step texts **must use the verb "should"**:
-`Then the products page should be visible` ✓ / `Then the products page is visible` ✗.
-
-For multi-step setup that isn't itself the test, use a composite `@Given` in a
-`steps/*.steps.ts` orchestration file rather than a long `Background` of granular steps.
-
-### Feature file structure rules
-
-- **Single-scenario feature**: no `Background` — inline the setup steps.
-- **Given vs When**: if a scenario has no `When` of its own, write its `Given` as `When` (unless the `Background` already contains a `When`).
+The code-generation conventions — dual-style POM/SOM, the three-section POM layout, BDD
+file naming, feature-file rules, locators, and tags — are the single-source contract in
+Project Memory: [`.claude/project/conventions.md`](.claude/project/conventions.md)
+(reference POM: `apps/yosemitecinema/pom/auth.page.ts`). Stack + full run matrix:
+[`.claude/project/stack.md`](.claude/project/stack.md).
 
 ### Pre-merge checklist
 
