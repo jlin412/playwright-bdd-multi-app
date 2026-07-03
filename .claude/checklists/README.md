@@ -20,6 +20,17 @@ live in Project Memory (`.claude/project/`), never here.
 | [mobile.md](mobile.md) | Mobile app coverage | mobile |
 | [iot.md](iot.md) | IoT ecosystem coverage | IoT |
 
+## Review-gate checklists
+
+A second kind of checklist answers *"is this artifact good enough to advance?"* — used by
+`/review` before `/approve`:
+
+| File | Gates |
+|---|---|
+| [review-plan.md](review-plan.md) | `plan.md` |
+| [review-manual.md](review-manual.md) | `manual.md` + `execution.md` |
+| [review-automation.md](review-automation.md) | `automation.md` + generated code |
+
 ## De-duplication rule
 
 Security, accessibility, and performance are **cross-cutting**: they exist **once**
@@ -29,7 +40,4 @@ cross-cutting checklist instead.
 
 ## Not here (by design)
 
-- **Review-gate checklists** (`review-plan.md`, `review-manual.md`,
-  `review-automation.md`) — added with the `/review` command. Those answer *"is this
-  artifact good enough to approve?"* rather than *"what should I test?"*.
 - **Per-phase output guidance** — lives in the Skills that consume these checklists.

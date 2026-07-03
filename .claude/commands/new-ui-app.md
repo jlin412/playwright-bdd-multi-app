@@ -32,7 +32,7 @@ Do this:
    - Replace the placeholder selectors in `apps/<name>/pom/login.page.ts`, then
      remove `.fixme` and re-tag the login feature `@smoke`. Discover real
      selectors with the Playwright MCP (`.vscode/mcp.json`) or an
-     `apps/<name>/recon/` script. See `.claude/CLAUDE.md` for conventions.
-   - Run `/plan-ui <url>` to start the QA pipeline (plan → manual → auto) under `docs/qa/<name>/`.
+     `apps/<name>/recon/` script. See `.claude/project/conventions.md` for conventions.
+   - Run `/plan-ui <url>` to start the QA pipeline (plan → manual → auto) under `artifacts/<name>/`.
 
 For a combined UI+API app, run `node scripts/new-app.mjs <name> --kind both …` directly.

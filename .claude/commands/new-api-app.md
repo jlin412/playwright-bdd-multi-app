@@ -33,7 +33,7 @@ Do this:
    parameters, note it — the generator only auto-covers no-parameter GETs.
 4. Next steps to share with the user:
    - Extend `apps/<name>/som/<name>.api.ts` with parameterized / auth / write
-     (POST/PUT/PATCH/DELETE) endpoints, following `.claude/CLAUDE.md` conventions.
-   - Run `/plan-api <specUrl>` to start the QA pipeline (plan → manual → auto) under `docs/qa/<name>/`.
+     (POST/PUT/PATCH/DELETE) endpoints, following `.claude/project/conventions.md` conventions.
+   - Run `/plan-api <specUrl>` to start the QA pipeline (plan → manual → auto) under `artifacts/<name>/`.
 
 For a combined UI+API app, run `node scripts/new-app.mjs <name> --kind both …` directly.

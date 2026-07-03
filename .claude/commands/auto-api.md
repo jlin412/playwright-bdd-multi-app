@@ -1,33 +1,16 @@
 # /auto-api
 
-Use `.claude/agents/automation-agent.md` in API mode. Manage state with
-`.claude/agents/workflow-agent.md`.
+Launch the **Automation (implementation)** phase in **API mode** — writes code.
 
-Input:
-- `docs/qa/<app>/AutomationPlan.md`
+Input: `artifacts/<feature>/automation.md` Part A (automation design must be `approved`).
 
-Goal:
-Implement the approved API automation in `apps/<app>/` and create
-`docs/qa/<app>/AutomationReport.md`.
+1. Resolve `<feature>`.
+2. Run the **qa-automation** skill in **API mode**. It runs qa-workflow (requires automation
+   design `approved`), implements only approved items into `apps/<feature>/` (SOM dual-style
+   + decorators, fixtures in both fixtures files, relative paths with basePath on endpoints)
+   following `.claude/project/conventions.md`, carries each `TC-*` ID into the test title,
+   reuses existing assets, validates with `npx tsc --noEmit` + `npm run test:<feature>` /
+   `test:bdd:<feature>`, and writes `artifacts/<feature>/automation.md` Part B + the
+   Traceability ledger (+ updates `automation.yaml`).
 
-Rules:
-- Only implement approved items from `AutomationPlan.md`.
-- **Transcribe, don't invent**: assertions use the **intended** expected response from `TestCases.md` verbatim; carry each `TC-*` ID into the test/scenario title so every test traces to a manual case (no orphans).
-- `fail` cases → `@triage` reproduction tests that assert the *intended* result (expected to fail = the repro); `@triage` is excluded from smoke/regression and runs via `npm run test:triage` / `npm run test:bdd:triage`. Do not also tag them `@smoke`/`@regression`.
-- Reuse existing Service Objects (`som/*.api.ts`), schemas, fixtures, auth helpers, test data builders, and utilities in `apps/<app>/`.
-- Add new code only where the automation plan says it is needed.
-- Follow `.claude/CLAUDE.md` (SOM dual-style + decorators, fixtures registered in both `specs/fixtures.ts` and `steps/fixtures.ts`, relative paths with basePath on endpoints, auto-retrying assertions, tags).
-- Update `docs/qa/<app>/Traceability.md` with each case's automation status + file.
-- Validate with `npx tsc --noEmit` and `npm run test:<app>` / `npm run test:bdd:<app>`; provide the run command and a summary.
-
-## Workflow protocol (run via `.claude/agents/workflow-agent.md`)
-
-Before implementing (START):
-1. Read root `CLAUDE.md` and `.claude/CLAUDE.md`.
-2. Read `docs/qa/<app>/ProjectState.md` (create from template if missing).
-3. Read the input artifact: `docs/qa/<app>/AutomationPlan.md`.
-4. Validate: requires **Automation Planning = done** (prefer `approved`). If `AutomationPlan.md` is missing or the app isn't `automation-planned`, **stop** and tell the user to run `/auto-plan-api` first.
-5. Read only the relevant `apps/<app>/` source files needed to implement the approved plan. Do not perform a full knowledge review — knowledge files were already used in the planning phases.
-
-After implementing (FINISH):
-6. Update `docs/qa/<app>/ProjectState.md` → `Current stage: automated` (Automation row `done`, timestamp, command), and add a History row noting the validation result.
+Then review: `/review <feature>` → `/approve <feature>`.
