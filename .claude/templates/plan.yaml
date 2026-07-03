@@ -1,0 +1,16 @@
+# Metadata sidecar for plan.md — the machine-readable stage record.
+# Workflow state is derived from these fields (see .claude/workflow/pipeline.md).
+stage: planning
+status: draft                 # draft | in-review | approved | rejected | blocked | stale
+owner: unassigned
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
+version: 1
+depends_on: []
+next_stage: manual
+approved_by:                  # set by /approve
+approval_date:                # set by /approve
+
+# Feature-level context (set once, at planning):
+mode: <ui|api>
+target: <url | spec | story>

@@ -1,6 +1,6 @@
 ---
 name: qa-automation-plan
-description: Convert executed manual cases into an automation implementation plan (no code), aligned 1:1 to TC-*. Used by /auto-plan-ui and /auto-plan-api. Gates automation by execution status, decides reuse vs new per case, and writes docs/qa/<app>/AutomationPlan.md.
+description: Convert executed manual cases into an automation implementation plan (no code), aligned 1:1 to TC-*. Used by /auto-plan-ui and /auto-plan-api. Gates automation by execution status, decides reuse vs new per case, and writes artifacts/<feature>/automation.md (Part A) + automation.yaml.
 ---
 
 # QA Automation Planning skill
@@ -10,11 +10,12 @@ test traces to a `TC-*`, and no test is planned without a verified manual parent
 Mode: `UI` or `API`.
 
 **Compose:** qa-workflow (state) · `.claude/project/conventions.md` (framework, standards,
-where code goes) · template `AutomationPlan.md`. Inspect only the relevant `apps/<app>/` files.
+where code goes) · template `automation.md` (+ `automation.yaml`). Inspect only the
+relevant `apps/<app>/` files.
 
 ## Do
 
-1. Read `TestCases.md` (intended results) + `TestExecution.md` (status + actual results).
+1. Read `artifacts/<feature>/manual.md` (intended results) + `execution.md` (status + actual).
 2. **Gate each case by execution status** (the alignment gate):
    - `pass` → automate as a normal test asserting the intended result (`@smoke`/`@regression`).
    - `fail` → automate as a `@triage` **reproduction** asserting the *intended* result
@@ -27,10 +28,11 @@ where code goes) · template `AutomationPlan.md`. Inspect only the relevant `app
    fixtures, hooks, utilities, schemas, selectors, tags) and the new assets needed +
    where they belong.
 5. Recommend tags + execution suite; plan assertions to reuse the **intended** expected
-   values from `TestCases.md` verbatim.
-6. Verify alignment **both ways** in `Traceability.md`: every planned test maps to a
-   `TC-*` (no orphans), and every `pass`/`fail` case is covered or listed as a gap.
+   values from `manual.md` verbatim.
+6. Verify alignment **both ways** in `automation.md` § Traceability: every planned test
+   maps to a `TC-*` (no orphans), and every `pass`/`fail` case is covered or listed as a gap.
 
 ## Output
 
-`docs/qa/<app>/AutomationPlan.md` (from the template). No automation code.
+`artifacts/<feature>/automation.md` (Part A — Plan) + `automation.yaml`, from the
+templates. No automation code.

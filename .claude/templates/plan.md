@@ -1,4 +1,6 @@
-# Test Plan
+# Test Plan — <feature>
+
+> Metadata: [`plan.yaml`](plan.yaml). Produced by `qa-planning` (`/plan-ui` · `/plan-api`).
 
 ## 1. Scope
 
@@ -26,6 +28,8 @@
 
 | Planned Test ID | Area | Scenario | Type | Priority | Risk | Notes |
 |---|---|---|---|---|---|---|
+
+<!-- Each row's Planned Test ID is a stable TC-<AREA><NN> carried through every later artifact. -->
 
 ## 10. Regression Recommendations
 

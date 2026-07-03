@@ -1,51 +1,54 @@
 ---
 name: qa-workflow
-description: State protocol for the QA pipeline. Reads, validates, and updates docs/qa/<app>/ProjectState.md and enforces phase order (plan → manual → auto-plan → auto). Invoked at the START and FINISH of every pipeline phase. Not user-facing.
+description: State protocol for the QA pipeline. Derives and updates workflow state from the per-stage YAML sidecars in artifacts/<feature>/ and enforces phase order. Invoked at the START and FINISH of every pipeline phase. Not user-facing.
 ---
 
 # QA Workflow — state protocol
 
-Single source of pipeline state. Keeps `docs/qa/<app>/ProjectState.md` current so any
-session knows where an app stands and out-of-order runs are refused. Every phase skill
-calls this at **START** (read + validate) and **FINISH** (update). It never writes test
-artifacts or code — only `ProjectState.md`.
+Owns pipeline state. State is **derived** from the per-stage YAML sidecars
+(`plan.yaml`, `manual.yaml`, `automation.yaml`) in `artifacts/<feature>/` — there is no
+separate state file to drift. Every phase skill calls this at **START** (read + validate)
+and **FINISH** (update). It writes only the sidecars + `history.md` — never test
+artifacts or code. Stage graph: [`.claude/workflow/pipeline.yaml`](../../workflow/pipeline.yaml).
 
 ## Stages (in order)
 
-| # | Stage key | Produced by (skill / command) | Required input | Output |
+| # | Stage | Skill · command | Input | Artifacts |
 |---|---|---|---|---|
-| 0 | `not-started` | — | — | — |
-| 1 | `planned` | qa-planning · `/plan-*` | the target | `docs/qa/<app>/TestPlan.md` |
-| 2 | `manual-designed` | qa-manual-design · `/manual-*` | `TestPlan.md` | `TestCases.md` + `TestExecution.md` (+ `Traceability.md`) |
-| 3 | `automation-planned` | qa-automation-plan · `/auto-plan-*` | `TestCases.md` + `TestExecution.md` | `AutomationPlan.md` |
-| 4 | `automated` | qa-automation · `/auto-*` | `AutomationPlan.md` | code in `apps/<app>/` + `AutomationReport.md` |
-
-> Execution and analysis stages join this table when the Artifacts/State layer lands.
+| 1 | `planning` | qa-planning · `/plan-*` | the target | `plan.md` + `plan.yaml` |
+| 2 | `manual` | qa-manual-design · `/manual-*` | `plan.*` | `manual.md` + `manual.yaml` + `execution.md` |
+| 3 | `automation` | qa-automation-plan (`/auto-plan-*`) → qa-automation (`/auto-*`) | `manual.*` | `automation.md` + `automation.yaml` + code |
+| — | execution · analysis · improvement | npm scripts · qa-triage | — | `execution.md` · `bugs.md` · `history.md` |
 
 ## START protocol — every phase runs this first
 
 1. Read repo memory: `.claude/project/conventions.md` + `.claude/project/stack.md`.
-2. Resolve `<app>`. Read `docs/qa/<app>/ProjectState.md`; if missing, create it from
-   `.claude/templates/ProjectState.md` (`Current stage: not-started`, `Mode`/`Target` set).
-3. Read the phase's required input artifact (see table). Named-but-missing = validation failure.
-4. **Validate the stage.** The prerequisite stage must be `done` or `approved`. If not:
+2. Resolve `<feature>`. Read `artifacts/<feature>/*.yaml`. If the folder is missing, create
+   it and seed this stage's artifacts from `.claude/templates/` (`status: draft`; set
+   `mode`/`target` on `plan.yaml`).
+3. Read the phase's required input artifact. Named-but-missing = validation failure.
+4. **Validate order**: the prerequisite stage's `status` must be `approved`. If not:
    - **Stop. Produce no output.**
-   - Report the current stage and the exact command to run first
-     (e.g. *"`saucedemo` is at `planned`; run `/manual-ui` before `/auto-plan-ui`."*).
-   - Exception: planning is the entry stage. Re-running an earlier stage is allowed but
-     warn that downstream artifacts become `stale`.
+   - Report the current stage + the exact command to run first
+     (e.g. *"`saucedemo` planning is `in-review`; run `/approve` before `/manual-ui`."*).
+   - Exception: `planning` is the entry stage (no prerequisite).
 
 ## FINISH protocol — every phase runs this last
 
-Update only `ProjectState.md`:
-- Set `Current stage` to what this phase produced; set its row `Status: done`
-  (use `approved` only when the artifact's `## Review Status` says approved).
-- Set `Last updated`, the row's `Updated`, and `Command`.
-- If an earlier stage was re-run, set every later stage `Status: stale`.
-- Append one `## History` row (date · command · one-line summary).
+- Set this stage's sidecar: `status: draft` (generation does **not** self-approve — a human
+  advances it via `/review` → `/approve`), and update `updated`, `version`, plus the
+  `run`/`validation` fields where applicable.
+- Append a row to `history.md` (date · stage · command · from→to · one-line summary).
+- If an earlier stage was re-run, set every later stage's `status: stale`.
+
+## Derived state (surfaced by `/status`)
+
+- **Current stage** — earliest gated stage whose `status` ≠ `approved` (respect `depends_on`).
+- **Completed** — `approved`. **Pending review** — `in-review`. **Blocked** — `blocked`.
+- **Next command** — the command that produces the current stage, or "review & `/approve`"
+  when it is `in-review`. Full rules: [`.claude/workflow/pipeline.md`](../../workflow/pipeline.md).
 
 ## Review gate
 
-A stage is satisfied when its artifact exists and its `## Review Status` (where present)
-is not `rejected`. Prefer `approved` before advancing; if the prior artifact is
-unreviewed you may proceed, but note it in the summary and History.
+Advance only past `approved` (set by `/approve`). `draft`/`in-review` are not advanceable;
+`rejected` returns to `draft` via `/revise` (which bumps `version`).

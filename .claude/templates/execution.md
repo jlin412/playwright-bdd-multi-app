@@ -1,16 +1,16 @@
-# Test Execution Log
+# Execution Log — <feature>
 
-Dated record of a manual test run. Pairs with `TestCases.md` (reusable case
-definitions) by `Test ID`. A re-run appends a new `## Run` section — do not
-overwrite prior runs.
+> Append-only. Each run adds a new `## Run` section — do not overwrite prior runs.
+> Pairs with [`manual.md`](manual.md) (manual runs) and covers automated runs too.
 
 ## Run
 
-- App:
+- Feature / App:
 - Target / Environment:
 - Run date:
 - Executed by:
 - Build / Version:
+- Type: manual | automated (`npm run test:<feature>` / `test:bdd:<feature>` / `test:triage`)
 
 ## Summary
 
@@ -25,15 +25,10 @@ overwrite prior runs.
 
 <!--
   Status: pass · fail · blocked · not-run
-  pass    = actual matches the intended expected result in TestCases.md
-  fail    = actual diverges → a defect; set @triage = yes (repro test, excluded from smoke/regression)
+  pass    = actual matches the intended expected result in manual.md
+  fail    = actual diverges → a defect; set @triage = yes and log it in bugs.md
   blocked = could not execute (unsafe/unreachable/missing data or env); document expected behavior in Notes
   not-run = deliberately not executed this cycle
 -->
-
-## Defects & Questions
-
-| # | Test ID | Severity | Intended (expected) | Actual (observed) | Notes / Repro |
-|---|---|---|---|---|---|
 
 ## Blockers

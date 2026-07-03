@@ -1,0 +1,17 @@
+stage: manual
+status: approved
+owner: migrated
+created: 2026-06-30
+updated: 2026-06-30
+version: 1
+depends_on: [planning]
+next_stage: automation
+approved_by: migrated-from-v6-ProjectState
+approval_date: 2026-06-30
+run:
+  date: 2026-06-30
+  pass: 24
+  fail: 0
+  blocked: 0
+  not_run: 0
+  triage: 0

@@ -1,0 +1,77 @@
+# QA Toolkit v3 — workflow definition (machine-readable)
+#
+# The lifecycle is a directed chain of stages. Each stage produces durable
+# artifacts under artifacts/<feature>/ and is gated by human review. Workflow
+# state is DERIVED from the per-stage YAML sidecars (no separate state file):
+# see workflow/pipeline.md for the derivation rules.
+
+feature_dir: artifacts/<feature>        # <feature> = the QA work unit (an app like `petstore`, or a feature slug)
+review_gate: human                      # every stage advances only past human review
+
+# Status vocabulary for a stage's YAML sidecar:
+#   draft | in-review | approved | rejected | blocked | stale
+statuses: [draft, in-review, approved, rejected, blocked, stale]
+
+stages:
+  - key: planning
+    name: Planning
+    skill: qa-planning
+    commands: [/plan-ui, /plan-api]
+    artifacts: [plan.md, plan.yaml]
+    depends_on: []
+    next: manual
+    gate: approved                      # manual may not start until plan is approved
+
+  - key: manual
+    name: Manual Testing
+    skill: qa-manual-design
+    commands: [/manual-ui, /manual-api]
+    artifacts: [manual.md, manual.yaml, execution.md]   # cases + live-run log
+    depends_on: [planning]
+    next: automation-plan
+    gate: approved
+
+  - key: automation-plan
+    name: Automation (design)
+    skill: qa-automation-plan
+    commands: [/auto-plan-ui, /auto-plan-api]
+    artifacts: [automation.md, automation.yaml]         # plan section
+    depends_on: [manual]
+    next: automation
+    gate: approved
+
+  - key: automation
+    name: Automation (implementation)
+    skill: qa-automation
+    commands: [/auto-ui, /auto-api]
+    artifacts: [automation.md, automation.yaml]         # impl + report section, plus code in apps/<app>/
+    depends_on: [automation-plan]
+    next: execution
+    gate: approved
+
+  - key: execution
+    name: Execution
+    skill: qa-workflow                  # no dedicated generator yet; run via npm scripts
+    commands: [npm run test:<feature>, npm run test:bdd:<feature>, npm run test:triage]
+    artifacts: [execution.md]           # append a dated run section
+    depends_on: [automation]
+    next: analysis
+    gate: none                          # append-only log, no approval gate
+
+  - key: analysis
+    name: Failure Analysis
+    skill: qa-triage
+    commands: []                        # fails surface from manual or execution; future Bug Investigator
+    artifacts: [bugs.md]                # defects, @triage repros, root-cause notes
+    depends_on: [manual, execution]
+    next: improvement
+    gate: none
+
+  - key: improvement
+    name: Continuous Improvement
+    skill: qa-workflow
+    commands: []                        # retro / coverage-gap review; future command
+    artifacts: [history.md]             # change log + improvement notes (append-only)
+    depends_on: [analysis]
+    next: null
+    gate: none

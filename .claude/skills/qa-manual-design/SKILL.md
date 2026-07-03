@@ -1,6 +1,6 @@
 ---
 name: qa-manual-design
-description: Expand an approved test plan into detailed manual cases AND run them live against the real app, recording intended vs actual result and a status. Used by /manual-ui (Playwright MCP browser) and /manual-api (real HTTP). Writes TestCases.md + TestExecution.md and updates Traceability.md.
+description: Expand an approved test plan into detailed manual cases AND run them live against the real app, recording intended vs actual result and a status. Used by /manual-ui (Playwright MCP browser) and /manual-api (real HTTP). Writes artifacts/<feature>/manual.md + execution.md (+ bugs.md for fails).
 ---
 
 # QA Manual Design & Execution skill
@@ -8,11 +8,11 @@ description: Expand an approved test plan into detailed manual cases AND run the
 The phase that performs **live recon** — planning did not. Mode: `UI` or `API`.
 
 **Compose:** qa-workflow (state) · the mode's checklists (coverage) · templates
-`TestCases.md`, `TestExecution.md`, `Traceability.md`.
+`manual.md`, `execution.md`.
 
 ## Do
 
-1. Read `docs/qa/<app>/TestPlan.md` and its `TC-*` inventory.
+1. Read `artifacts/<feature>/plan.md` and its `TC-*` inventory.
 2. For each planned case, write **preconditions, test data, steps, and the intended
    expected result** — keep the plan's `TC-*` ID unchanged.
 3. **Execute each case live** (bounded — see below). Capture what the app *actually*
@@ -27,7 +27,9 @@ The phase that performs **live recon** — planning did not. Mode: `UI` or `API`
      expected behavior instead of running it.
    - `not-run` — deliberately not executed this cycle.
 5. Log defects, questions, and blockers with enough detail to reproduce.
-6. Maintain traceability (Plan ID → `TC-*` → latest status) in `Traceability.md`.
+6. Keep the Plan ID → `TC-*` mapping in `manual.md` (the case rows) and the per-case
+   status in `execution.md`. The full case↔automation ledger is assembled later, in
+   `automation.md` § Traceability.
 
 ## What to run vs defer
 
@@ -44,14 +46,14 @@ Distill findings into the case — never paste raw snapshots or full response du
 ## Inventory revision
 
 You may **add** cases discovered during exploration (new `TC-*` IDs, `Origin: discovered`)
-and **mark planned cases N/A**. Record the drift in `Traceability.md`.
+and **mark planned cases N/A**. Record the drift in `history.md`.
 
 ## Output
 
-- `TestCases.md` — **reusable** cases (ID, preconditions, test data, steps, **intended**
-  result, automation candidate). No run results here.
-- `TestExecution.md` — **dated** run log (per-case status, **actual** observed result,
-  defects, questions, blockers, environment/target, run date).
-- `Traceability.md` — Plan ID → `TC-*` → latest status → automation.
+- `artifacts/<feature>/manual.md` — **reusable** cases (ID, Plan ID, preconditions, test
+  data, steps, **intended** result, automation candidate). No run results here.
+- `artifacts/<feature>/execution.md` — **dated** run log (per-case status, **actual**
+  observed result, environment/target, blockers). Append a `## Run` section per run.
+- `artifacts/<feature>/bugs.md` — log each `fail` as a defect entry (see qa-triage).
 
 No automation code.

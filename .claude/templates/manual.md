@@ -1,13 +1,10 @@
-# Manual Test Cases
+# Manual Test Cases — <feature>
 
-Reusable, stable case definitions. Execution results (status, actual observed
-values, defects) live in `TestExecution.md`, keyed by `Test ID`.
+> Metadata: [`manual.yaml`](manual.yaml). Produced by `qa-manual-design`
+> (`/manual-ui` · `/manual-api`). Run results live in [`execution.md`](execution.md),
+> keyed by `Test ID`.
 
-## Review Status
-
-- Reviewed by:
-- Review date:
-- Status:
+Reusable, stable case definitions. No run results here.
 
 ## Test Cases
 
@@ -20,4 +17,3 @@ values, defects) live in `TestExecution.md`, keyed by `Test ID`.
   Expected Result (Intended): what SHOULD happen — automation asserts this verbatim.
   Automation Candidate: yes · no · @triage (case failed on execution — carried as a repro test).
 -->
-

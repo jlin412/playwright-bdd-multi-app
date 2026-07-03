@@ -1,6 +1,6 @@
 ---
 name: qa-planning
-description: Create a test plan — structure only, no manual steps and no code. Used by /plan-ui and /plan-api. Builds the case inventory from supplied context, a passive read-only scan, and coverage checklists; assigns stable TC-* IDs; writes docs/qa/<app>/TestPlan.md.
+description: Create a test plan — structure only, no manual steps and no code. Used by /plan-ui and /plan-api. Builds the case inventory from supplied context, a passive read-only scan, and coverage checklists; assigns stable TC-* IDs; writes artifacts/<feature>/plan.md (+ plan.yaml).
 ---
 
 # QA Planning skill
@@ -11,7 +11,7 @@ behave. Mode is a parameter — `UI` or `API`.
 **Compose, don't restate:**
 - State → run the **qa-workflow** START protocol first and FINISH last.
 - Coverage → read the mode's checklists (map in `.claude/project/conventions.md`).
-- Output shape → `.claude/templates/TestPlan.md`.
+- Output shape → `.claude/templates/plan.md` (+ metadata `.claude/templates/plan.yaml`).
 
 ## Sources (priority order)
 
@@ -40,7 +40,7 @@ Behavioral recon and execution are **not** here — that is `qa-manual-design`.
 
 ## Output
 
-`docs/qa/<app>/TestPlan.md` (from the template): scope, out-of-scope, assumptions, open
-questions, modules/endpoints, risk assessment, strategy, the manual test case inventory
-(each row carrying its `TC-*` ID), and regression recommendations. No detailed steps, no
-payloads, no automation code.
+`artifacts/<feature>/plan.md` (+ `plan.yaml`), from the templates: scope, out-of-scope,
+assumptions, open questions, modules/endpoints, risk assessment, strategy, the manual test
+case inventory (each row carrying its `TC-*` ID), and regression recommendations. No
+detailed steps, no payloads, no automation code.
