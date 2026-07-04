@@ -132,26 +132,30 @@ in `config/apps.ts`, and adds `test:<name>` / `test:bdd:<name>` scripts. Run the
 engine directly for a combined app: `node scripts/new-app.mjs <name> --kind both …`.
 `apps/_template` is excluded from runs (`testIgnore`) but must still type-check.
 
-## QA Toolkit v3 (Claude Code commands)
+## QA Toolkit v4 (Claude Code commands)
 
-An AI-native, artifact-driven QA toolkit ships as slash commands. Each lifecycle stage
-produces a durable, reviewable artifact under `artifacts/<feature>/`; the final stage
-generates real automation code in `apps/<app>/`. Overview + migration guide: `README.md`
-§ "QA Toolkit v3". Layers:
+An AI-native QA toolkit ships as slash commands: four specialist agents in a strictly
+sequential, review-driven workflow. Each stage writes a durable deliverable under
+`deliverables/<feature>/`; automation code lands in `apps/<app>/`. Overview + migration
+guide: `README.md` § "QA Toolkit v4". Layers:
 
-- **Commands** (`.claude/commands/`) — thin launchers (orchestration only).
-- **Skills** (`.claude/skills/`) — reusable QA methodology (`qa-planning`, `qa-manual-design`, `qa-automation-plan`, `qa-automation`, `qa-triage`, `qa-workflow`); each has a paired subagent in `.claude/agents/`.
-- **Checklists** (`.claude/checklists/`) — single-source coverage + review gates.
-- **Templates** (`.claude/templates/`) — artifact skeletons (`.md` + `.yaml`).
+- **Commands** (`.claude/commands/`) — thin launchers; each workflow command generates,
+  then owns the complete interactive review of its deliverable.
+- **Skills** (`.claude/skills/`) — reusable QA methodology (`qa-test-plan`, `qa-manual`,
+  `qa-automation`, `qa-testops`, plus shared `qa-review` + `qa-triage`); the four
+  specialists have paired subagents in `.claude/agents/`.
+- **Checklists** (`.claude/checklists/`) — single-source coverage + review checklists.
+- **Templates** (`.claude/templates/`) — deliverable skeletons (`01`–`04`).
 - **Project Memory** (`.claude/project/`) — this repo's conventions + stack.
-- **Workflow** (`.claude/workflow/`) — the six-stage lifecycle + state-derivation rules.
-- **Artifacts** (`artifacts/<feature>/`) — the durable source of truth.
+- **Deliverables** (`deliverables/<feature>/`) — the durable source of truth
+  (`artifacts/` is the read-only v3 archive).
 
-Pipeline: `/plan-*` → `/manual-*` → `/auto-plan-*` → `/auto-*`, with `/review` → `/approve`
-gates between; `/status`, `/revise`, `/history` operate on the artifacts. Workflow state is
-**derived from the per-stage YAML sidecars** — no chat history required to resume.
-`/bootstrap` regenerates `.claude/project/`. Scaffold a new target with `/new-ui-app` /
-`/new-api-app`, then run the pipeline.
+Workflow: `/test-plan` → `/manual-qa` → `/auto-qa` → `/testops`. There is no approval
+command and no state machine — running the next command implicitly accepts the previous
+stage, and each command finishes with an interactive review (one question at a time,
+then a feedback loop) recorded in the deliverable's Review History. `/status` derives
+progress from which deliverables exist. `/bootstrap` regenerates `.claude/project/`.
+Scaffold a new target with `/new-ui-app` / `/new-api-app`, then run the workflow.
 
 ## Conventions
 

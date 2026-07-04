@@ -17,5 +17,5 @@ Ask or infer:
 - Preferred tags · Preferred locator strategy · Run commands
 - Apps under test + their targets, and the env-var scheme
 
-The portable layers (`skills/`, `checklists/`, `templates/`, `workflow/`) are stack-agnostic
-and are **not** rewritten here. Do not create tests.
+The portable layers (`skills/`, `checklists/`, `templates/`) are stack-agnostic and are
+**not** rewritten here. Do not create tests.

@@ -33,6 +33,7 @@ Do this:
      remove `.fixme` and re-tag the login feature `@smoke`. Discover real
      selectors with the Playwright MCP (`.vscode/mcp.json`) or an
      `apps/<name>/recon/` script. See `.claude/project/conventions.md` for conventions.
-   - Run `/plan-ui <url>` to start the QA pipeline (plan → manual → auto) under `artifacts/<name>/`.
+   - Run `/test-plan <url>` to start the QA workflow (`/test-plan` → `/manual-qa` →
+     `/auto-qa` → `/testops`) under `deliverables/<name>/`.
 
 For a combined UI+API app, run `node scripts/new-app.mjs <name> --kind both …` directly.
