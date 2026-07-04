@@ -41,8 +41,7 @@ into its generated projects' `use.baseURL`. Projects encode only browser/style.
 - `lib/load-env.ts` loads root `.env` then every `apps/<name>/.env`
   (`override:false` → real/CI env wins). Imported by both configs before `config/apps`.
 - Keys are app-unique/prefixed (one shared process): e.g. `SAUCEDEMO_BASE_URL`,
-  `SAUCE_USERNAME`/`SAUCE_PASSWORD`; `YOSEMITECINEMA_BASE_URL`,
-  `TEST_MEMBER_EMAIL`/`TEST_MEMBER_PASSWORD`.
+  `SAUCE_USERNAME`/`SAUCE_PASSWORD`; `PETSTORE_BASE_URL`.
 - `<NAME>_BASE_URL` overrides an app's base URL.
 - Per-app `.env` is gitignored; `.env.example` is committed. In CI, pass secrets as
   workflow env vars.
@@ -53,7 +52,6 @@ into its generated projects' `use.baseURL`. Projects encode only browser/style.
 |---|---|---|
 | `saucedemo` | UI | https://www.saucedemo.com |
 | `petstore` | API | https://petstore.swagger.io |
-| `yosemitecinema` | UI + API | https://www.yosemitecinema.com |
 | `_template` | skeleton | copyable; `testIgnore`d, must still type-check |
 
 ## Run matrix (key scripts)
@@ -65,8 +63,11 @@ into its generated projects' `use.baseURL`. Projects encode only browser/style.
 - Triage (failed-case repros only): `npm run test:triage` · `test:bdd:triage`
 - Type-check (CI gate): `npx tsc --noEmit`
 - CI sets `forbidOnly`, `retries: 1`; BDD caps `workers: 2`. External targets
-  (yosemitecinema, petstore) can be slow/flaky — prefer `expect.poll`, assert shape
-  over exact counts, re-run before declaring a flake a failure.
+  (petstore) can be slow/flaky — prefer `expect.poll`, assert shape over exact counts,
+  re-run before declaring a flake a failure.
+- CI workflows: `.github/workflows/playwright.yml` is the blocking smoke gate;
+  `.github/workflows/testops.yml` runs the smoke + regression matrix on PRs
+  (report-only) and posts the release-readiness verdict as a sticky PR comment.
 
 ## AI-authoring support
 

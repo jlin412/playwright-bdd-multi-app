@@ -1,6 +1,6 @@
 ---
 name: qa-testops
-description: Validate overall automation quality — run the smoke, regression, UI, API, and cross-browser suites, analyze failures, flaky tests, coverage, and runtime, and assess release readiness. Used by /testops. Writes deliverables/<feature>/04-TestOps.md.
+description: Validate overall automation quality — run the smoke, regression, UI, API, and cross-browser suites, analyze failures, flaky tests, coverage, and runtime, and assess release readiness. Used by /testops (feature or repo scope). Writes deliverables/<feature>/04-TestOps.md or deliverables/_repo/TestOps.md, and appends every run to the deliverables/_repo/ledger.md trend ledger.
 ---
 
 # TestOps skill
@@ -26,7 +26,8 @@ Execute the suites relevant to the feature's scope (commands in
   fail while their defect is open — that is their job, not a suite failure)
 
 Scope runs to the feature's app where possible (`npm run test:<app>`,
-`npm run test:bdd:<app>`); run the full matrix when assessing the whole repo.
+`npm run test:bdd:<app>`); in **repo scope** (`/testops repo`) run the full matrix
+across all apps.
 
 ## Analyze
 
@@ -40,6 +41,10 @@ Scope runs to the feature's app where possible (`npm run test:<app>`,
   gaps in `03-Automation-QA.md`; call out untested high-risk areas.
 - **Runtime** — total and per-suite duration, worker settings, obvious parallelism or
   duplication wins.
+- **Trends** (repo scope) — read `deliverables/_repo/ledger.md`: flake rate and
+  runtime per suite across the recorded runs; call out degradations (a suite trending
+  slower, a test flaking across multiple runs). Skip when the ledger has fewer than
+  two runs.
 - **Release readiness** — a clear verdict (ready / ready-with-risks / not-ready) with
   the evidence: gate suites green, open defects (`@triage` register), coverage gaps.
 
@@ -48,6 +53,15 @@ not (they stay in the defect list). Larger reworks become recommendations.
 
 ## Output
 
-`deliverables/<feature>/04-TestOps.md`: execution summary (per-suite results table),
-coverage, failure analysis, flaky tests, release readiness verdict, and framework
-improvement suggestions — plus Review Checklist and Review History.
+`deliverables/<feature>/04-TestOps.md` (feature scope) or
+`deliverables/_repo/TestOps.md` (repo scope, updated in place): execution summary
+(per-suite results table), coverage, failure analysis, flaky tests, trends (repo
+scope), release readiness verdict, and framework improvement suggestions — plus Review
+Checklist and Review History.
+
+**Every** run — either scope — appends one row per suite executed to the append-only
+ledger `deliverables/_repo/ledger.md`
+(`| Date | Scope | Suite | Pass | Fail | Flaky | Duration | Verdict |`; create it with
+that header on first run; Verdict = the run's release verdict, repeated per row). CI
+runs the same matrix on PRs and posts the same verdict as a sticky comment
+(`.github/workflows/testops.yml`).

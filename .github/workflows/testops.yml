@@ -1,0 +1,162 @@
+name: TestOps verdict
+
+# Report-only companion to playwright.yml (the blocking smoke gate): runs the
+# smoke + regression matrix on PRs and posts the release-readiness verdict as a
+# sticky comment. Verdict rules mirror the qa-testops skill:
+# smoke red -> not-ready · regression red -> ready-with-risks · all green -> ready.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: spec-smoke
+            command: npm test
+            gate: smoke
+          - suite: bdd-smoke
+            command: npm run test:bdd
+            gate: smoke
+          - suite: spec-regression
+            command: npm run test:regression
+            gate: regression
+          - suite: bdd-regression
+            command: npm run test:bdd:regression
+            gate: regression
+    # Base URLs live in each apps/<name>/app.config.ts (override with <NAME>_BASE_URL);
+    # add an env: block here if a future app needs secrets, matching playwright.yml.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run ${{ matrix.suite }}
+        id: run
+        # The suite command must not abort the step: outcome + duration are
+        # recorded to JSON for the verdict job, then the step fails visibly below.
+        run: |
+          start=$(date +%s)
+          outcome=pass
+          ${{ matrix.command }} || outcome=fail
+          end=$(date +%s)
+          mkdir -p testops-results
+          printf '{"suite":"%s","gate":"%s","outcome":"%s","duration_s":%d}\n' \
+            "${{ matrix.suite }}" "${{ matrix.gate }}" "$outcome" "$((end - start))" \
+            > "testops-results/${{ matrix.suite }}.json"
+          echo "outcome=$outcome" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: testops-${{ matrix.suite }}
+          path: testops-results/
+          retention-days: 7
+
+      - name: Mark suite result
+        if: steps.run.outputs.outcome == 'fail'
+        run: exit 1
+
+  verdict:
+    needs: suite
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: testops-*
+          merge-multiple: true
+          path: testops-results
+
+      - name: Compute verdict
+        run: |
+          python3 - <<'EOF'
+          import glob, json, os
+
+          EXPECTED = 4  # keep in sync with the suite matrix above
+          suites = [json.load(open(p)) for p in sorted(glob.glob("testops-results/*.json"))]
+          missing = EXPECTED - len(suites)
+          smoke_red = any(s["outcome"] != "pass" for s in suites if s["gate"] == "smoke")
+          regression_red = any(s["outcome"] != "pass" for s in suites if s["gate"] == "regression")
+
+          if smoke_red or missing:
+              verdict = "not-ready"
+          elif regression_red:
+              verdict = "ready-with-risks"
+          else:
+              verdict = "ready"
+
+          lines = [
+              "<!-- testops-verdict -->",
+              f"## TestOps verdict: **{verdict}**",
+              "",
+              "| Suite | Gate | Result | Duration |",
+              "|---|---|---|---|",
+          ]
+          for s in suites:
+              icon = "✅" if s["outcome"] == "pass" else "❌"
+              lines.append(f"| {s['suite']} | {s['gate']} | {icon} {s['outcome']} | {s['duration_s']}s |")
+          if missing:
+              lines += ["", f"⚠️ {missing} suite job(s) produced no result (infra failure) — treated as not-ready."]
+          lines += [
+              "",
+              "_Rules: smoke red → not-ready · regression red → ready-with-risks · all green → ready. "
+              "Report-only; `/testops` in-repo is the full analysis._",
+          ]
+          body = "\n".join(lines)
+
+          with open("comment.md", "w") as f:
+              f.write(body)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write(body + "\n")
+          EOF
+
+      - name: Upsert PR comment
+        # Fork PRs get a read-only token; the step summary still carries the verdict.
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('comment.md', 'utf8');
+            const marker = '<!-- testops-verdict -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

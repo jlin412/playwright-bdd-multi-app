@@ -1,7 +1,9 @@
-# TestOps — <feature>
+# TestOps — <feature | repo>
 
 > Produced by the **TestOps** specialist (`/testops` · `qa-testops` skill). Validates
-> overall automation quality and release readiness.
+> overall automation quality and release readiness. Repo scope writes
+> `deliverables/_repo/TestOps.md`; every run appends per-suite rows to
+> `deliverables/_repo/ledger.md`.
 
 ## Executive Summary
 
@@ -42,6 +44,12 @@
 ## Runtime
 
 <!-- Total + per-suite duration, worker settings, parallelism/duplication wins. -->
+
+## Trends
+
+<!-- Repo scope, from deliverables/_repo/ledger.md: flake rate + runtime per suite
+     across the recorded runs; degradations called out. Omit when the ledger has
+     fewer than two runs. -->
 
 ## Release Readiness
 

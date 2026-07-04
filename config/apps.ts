@@ -6,8 +6,7 @@ import type { AppDescriptor } from '../lib/app-config';
 // this array to generate their projects, so adding an app is:
 //   1. create apps/<name>/ (copy apps/_template, or run /new-api-app or /new-ui-app)
 //   2. add one import + one array entry below
-import yosemitecinema from '../apps/yosemitecinema/app.config';
 import saucedemo from '../apps/saucedemo/app.config';
 import petstore from '../apps/petstore/app.config';
 
-export const apps: AppDescriptor[] = [yosemitecinema, saucedemo, petstore];
+export const apps: AppDescriptor[] = [saucedemo, petstore];

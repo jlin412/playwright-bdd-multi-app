@@ -14,9 +14,6 @@ jobs:
       SMOKE_ONLY: '1'
       # Each app under test carries its own base URL in apps/<name>/app.config.ts.
       # Override per app with <NAME>_BASE_URL, e.g. SAUCEDEMO_BASE_URL.
-      # Optional: yosemitecinema member-account scenarios need these (set them as repo secrets).
-      TEST_MEMBER_EMAIL: ${{ secrets.TEST_MEMBER_EMAIL }}
-      TEST_MEMBER_PASSWORD: ${{ secrets.TEST_MEMBER_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 

@@ -10,9 +10,10 @@ Templates (deliverable shape), and Project Memory (repo facts). Skills are mode-
 | [qa-test-plan](qa-test-plan/SKILL.md) | Test Plan | `/test-plan` | `01-Test-Plan.md` |
 | [qa-manual](qa-manual/SKILL.md) | Manual QA | `/manual-qa` | `02-Manual-QA.md` + Gherkin |
 | [qa-automation](qa-automation/SKILL.md) | Automation QA | `/auto-qa` | `03-Automation-QA.md` + code |
-| [qa-testops](qa-testops/SKILL.md) | TestOps | `/testops` | `04-TestOps.md` |
+| [qa-testops](qa-testops/SKILL.md) | TestOps | `/testops` (feature or `repo`) | `04-TestOps.md` / `_repo/TestOps.md` + `_repo/ledger.md` |
+| [qa-investigate](qa-investigate/SKILL.md) | Bug Investigator | `/investigate` (on demand) | `05-Investigations.md` |
 | [qa-review](qa-review/SKILL.md) | (shared) | every workflow command | the interactive review (Steps 2–6) |
-| [qa-triage](qa-triage/SKILL.md) | (shared) | consumed by manual + automation | `@triage` repro contract |
+| [qa-triage](qa-triage/SKILL.md) | (shared) | consumed by manual + automation | `@triage` repro contract + retag-on-fix rule |
 
 ## Design rules
 
@@ -23,6 +24,6 @@ Templates (deliverable shape), and Project Memory (repo facts). Skills are mode-
 - **Portable.** No repo-specific paths beyond the stable `deliverables/<feature>/`
   layout; anything repo-specific is read from Project Memory.
 
-The four specialist skills each have a paired subagent in `.claude/agents/` (same name)
-for separate-context delegation of the **generation** step. The `qa-review` protocol
+The five specialist skills each have a paired subagent in `.claude/agents/` for
+separate-context delegation of the **generation** step. The `qa-review` protocol
 always runs in the main conversation — it is a dialogue with the user.

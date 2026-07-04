@@ -1,6 +1,6 @@
 # Artifacts — legacy v3 archive
 
-**This layout is superseded.** The QA Toolkit v4 writes its deliverables to
+**This layout is superseded.** The QA Toolkit (v4+) writes its deliverables to
 [`deliverables/<feature>/`](../deliverables/README.md)
 (`01-Test-Plan.md` → `02-Manual-QA.md` → `03-Automation-QA.md` → `04-TestOps.md`,
 produced by `/test-plan` → `/manual-qa` → `/auto-qa` → `/testops`).

@@ -19,7 +19,6 @@ a new app is "drop a folder + register one line" (or run `/new-api-app` / `/new-
 |---|---|---|---|
 | `apps/saucedemo` | UI | https://www.saucedemo.com | Login, cart, full checkout across chromium/firefox/webkit |
 | `apps/petstore` | API | https://petstore.swagger.io | Create/fetch pet, find-by-status, store inventory |
-| `apps/yosemitecinema` | UI + API | https://www.yosemitecinema.com | A richer real-world suite (browsing, auth, ticketing, payment) |
 
 ## How it fits together
 
@@ -75,8 +74,6 @@ npm run test:saucedemo            # spec smoke for saucedemo (all 3 browsers)
 npm run test:bdd:saucedemo        # BDD for saucedemo
 npm run test:petstore             # spec for petstore
 npm run test:bdd:petstore         # BDD for petstore
-npm run test:yosemitecinema
-npm run test:bdd:yosemitecinema
 # (equivalent path filter: npx playwright test apps/<name>)
 # /new-api-app and /new-ui-app add test:<name> + test:bdd:<name> automatically.
 
@@ -119,7 +116,7 @@ Each app has its **own** `apps/<name>/.env` (gitignored), plus a committed
 CI variables always win. Copy the example to start:
 
 ```bash
-cp apps/yosemitecinema/.env.example apps/yosemitecinema/.env   # then fill in
+cp apps/saucedemo/.env.example apps/saucedemo/.env   # then fill in
 ```
 
 Because Playwright runs all apps in one process, **keep keys app-unique
@@ -127,12 +124,11 @@ Because Playwright runs all apps in one process, **keep keys app-unique
 
 - `apps/saucedemo/.env` → `SAUCEDEMO_BASE_URL`, `SAUCE_USERNAME`, `SAUCE_PASSWORD`
 - `apps/petstore/.env` → `PETSTORE_BASE_URL`
-- `apps/yosemitecinema/.env` → `YOSEMITECINEMA_BASE_URL`, `TEST_MEMBER_EMAIL`, `TEST_MEMBER_PASSWORD`
 
 Other knobs:
 - `<NAME>_BASE_URL` — override any app's base URL (also settable as a shell/CI var).
 - `SMOKE_ONLY=1` — excludes multi-step `specs/e2e/workflows/**` and `@fail`/`@tracefail` BDD scenarios (set automatically by `npm test` / `npm run test:bdd`).
-- In CI, set secrets (e.g. `TEST_MEMBER_EMAIL/PASSWORD`) as workflow env vars — they override the (absent) per-app `.env`.
+- In CI, any per-app secrets are set as workflow env vars — they override the (absent) per-app `.env`.
 
 ## Add a new app
 
@@ -167,13 +163,14 @@ For each app the generator:
 To add one by hand: copy `apps/_template`, set its `app.config.ts`, and add one
 import + array entry to `config/apps.ts`.
 
-## QA Toolkit v4
+## QA Toolkit v5
 
 An **AI-native QA engineering toolkit** ships as Claude Code slash commands: four AI
 specialists — Test Plan, Manual QA, Automation QA, TestOps — in a simple, strictly
-sequential, **review-driven** workflow. You act as the QA Architect and QA Manager;
-every stage writes a durable deliverable under `deliverables/<feature>/`, so work can be
-reviewed, edited, versioned, and resumed later — **chat history is never required**.
+sequential, **review-driven** workflow, plus an on-demand **Bug Investigator**. You act
+as the QA Architect and QA Manager; every stage writes a durable deliverable under
+`deliverables/<feature>/`, so work can be reviewed, edited, versioned, and resumed
+later — **chat history is never required**.
 
 ![Agentic QA artifact-driven automation pipeline overview](docs/images/Agentic_QA_Automation_Pipeline_Overview.png)
 
@@ -184,13 +181,13 @@ Reusable expertise is separated from repo-specific memory so the toolkit is port
 | Layer | Path | Role |
 |---|---|---|
 | **Commands** | `.claude/commands/` | Thin launchers — generate, then own the complete review |
-| **Skills** | `.claude/skills/` | Reusable QA methodology (`qa-test-plan`, `qa-manual`, `qa-automation`, `qa-testops`, shared `qa-review` + `qa-triage`) |
+| **Skills** | `.claude/skills/` | Reusable QA methodology (`qa-test-plan`, `qa-manual`, `qa-automation`, `qa-testops`, `qa-investigate`, shared `qa-review` + `qa-triage`) |
 | **Checklists** | `.claude/checklists/` | Single-source coverage gates + per-stage review checklists |
-| **Templates** | `.claude/templates/` | Deliverable skeletons (`01`–`04`) |
-| **Project Memory** | `.claude/project/` | This repo's conventions + stack (the only per-repo layer) |
+| **Templates** | `.claude/templates/` | Deliverable skeletons (`01`–`05`) |
+| **Project Memory** | `.claude/project/` | This repo's conventions + stack + review calibration (the only per-repo layer) |
 | **Deliverables** | `deliverables/<feature>/` | The durable source of truth (outside `.claude/`) |
 
-The four specialist skills have paired subagents in `.claude/agents/` for
+The five specialist skills have paired subagents in `.claude/agents/` for
 separate-context delegation. Portable layers (skills / checklists / templates) can be
 lifted into another repo unchanged; only `.claude/project/` is rewritten (`/bootstrap`
 regenerates it).
@@ -210,6 +207,27 @@ implicitly accepts the previous stage:
 | 2 | `/manual-qa` | Validate live (Playwright MCP / real HTTP) + write the Gherkin spec, reuse-first | `02-Manual-QA.md` + `apps/<app>/features/` |
 | 3 | `/auto-qa` | Evaluate **every** case, maximize automation, iterate generate → run → fix until stable | `03-Automation-QA.md` + code in `apps/<app>/` |
 | 4 | `/testops` | Run smoke/regression/UI/API/cross-browser; flake + failure analysis; release readiness | `04-TestOps.md` |
+
+On demand (not stages): `/investigate <feature>` root-causes one open defect from
+`02-Manual-QA.md § Possible Defects` → `05-Investigations.md`; `/testops repo` assesses
+the whole repo with trends from `deliverables/_repo/ledger.md`.
+
+### New in v5
+
+- **Bug Investigator** — `/investigate <feature> [defect]` replays the `@triage` repro
+  for fresh evidence, delivers a product/test/environment root-cause verdict, drafts a
+  developer-ready bug report, and states the fix-verification contract (repro passes →
+  retag `@triage` → `@regression`).
+- **Cross-feature TestOps** — `/testops repo` (no per-feature precondition) writes
+  `deliverables/_repo/TestOps.md`; **every** `/testops` run appends per-suite rows to
+  the append-only `deliverables/_repo/ledger.md`, powering flake-rate + runtime trends.
+- **Review calibration** — overridden review recommendations are marked `overridden:`
+  in Review History; `/bootstrap` distills recurring ones into
+  `.claude/project/review-calibration.md`, which `qa-review` applies instead of
+  re-asking settled questions.
+- **CI verdict on PRs** — `.github/workflows/testops.yml` runs the smoke + regression
+  matrix on every PR (report-only; `playwright.yml` stays the blocking gate) and posts
+  the release-readiness verdict as a sticky PR comment.
 
 ### The review experience (every command, same pattern)
 
@@ -236,6 +254,9 @@ authored before their steps exist are tagged `@manual` until `/auto-qa` implemen
 /auto-qa petstore        # writes + stabilizes code in apps/petstore/ → 03-Automation-QA.md + review
 /testops petstore        # runs the suites → 04-TestOps.md + release verdict + review
 /status petstore         # where am I? what's next?
+
+/investigate petstore    # on demand: root-cause an open defect → 05-Investigations.md
+/testops repo            # on demand: whole-repo verdict + trends → deliverables/_repo/
 ```
 
 For a brand-new target, scaffold first with `/new-ui-app` or `/new-api-app`, then run the
@@ -275,10 +296,10 @@ screenshots are retained on failure (`trace: retain-on-failure`).
 
 - **SauceDemo / PetStore** are public demo services — no local stack required.
 - **PetStore** (`petstore.swagger.io`) is a shared, mutable sandbox; its tests assert response *shape* and a create→fetch round-trip rather than exact counts, with readiness polling. CI `retries: 1` covers transient flakiness.
-- **yosemitecinema** is a live external site — its config uses generous timeouts and caps BDD workers at 2.
 
 ## Recon / MCP exploration
 
-`apps/yosemitecinema/recon/` holds the exploration scripts used to discover real
-selectors and flows before writing page objects (the AI-assisted authoring loop).
-`.vscode/mcp.json` wires up the Playwright MCP server for the same workflow.
+`apps/<name>/recon/` is where one-off exploration scripts live — used to discover
+real selectors and flows before writing page objects (the AI-assisted authoring
+loop). Not part of the test suite; run directly with `node`. `.vscode/mcp.json`
+wires up the Playwright MCP server for the same workflow.
