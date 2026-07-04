@@ -25,7 +25,7 @@ Generate into the target app under `apps/<app>/`:
 - **Relative navigation** (`page.goto('/')`, `request.get('/path')`); base URL comes from `app.config.ts` / `apps/<app>/.env`; for an API base path (e.g. `/v2`) put the origin in `baseURL` and the prefix on endpoint paths.
 - **Locators**: `getByRole` / `getByLabel` / `getByTestId`. Auto-retrying assertions; no hard waits.
 - Every `@Then` uses the verb **"should"**.
-- **Tags**: `@smoke` (must-pass gate) · `@regression` · `@ui` · `@api`. `@triage` marks a failed-case reproduction — excluded from smoke/regression, run via `npm run test:triage` / `npm run test:bdd:triage`; never also tag it `@smoke`/`@regression`.
+- **Tags**: `@smoke` (must-pass gate) · `@regression` · `@ui` · `@api`. `@triage` marks a failed-case reproduction — excluded from smoke/regression, run via `npm run test:triage` / `npm run test:bdd:triage`; never also tag it `@smoke`/`@regression`. `@manual` marks a scenario authored by `/manual-qa` whose steps are not yet implemented — it carries no run tags (so `bddgen` tag expressions never select it) until `/auto-qa` implements the steps and retags it.
 - Keep Gherkin business-readable; steps thin (UI behavior in POM, API behavior in SOM).
 
 ## BDD file naming
@@ -60,5 +60,7 @@ created/modified.
 
 ## Review gate
 
-Do not skip checkpoints. `/auto-*` writes code **only** from the approved automation plan
-(`artifacts/<feature>/automation.md` Part A).
+The workflow is strictly sequential: `/auto-qa` writes code **only** from the reviewed
+manual specification (`deliverables/<feature>/02-Manual-QA.md` + the Gherkin it
+created/updated). Running a stage command implicitly accepts the previous stage's
+deliverable; each command then owns its own interactive review (the `qa-review` skill).

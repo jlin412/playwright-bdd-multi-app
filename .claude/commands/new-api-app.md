@@ -34,6 +34,7 @@ Do this:
 4. Next steps to share with the user:
    - Extend `apps/<name>/som/<name>.api.ts` with parameterized / auth / write
      (POST/PUT/PATCH/DELETE) endpoints, following `.claude/project/conventions.md` conventions.
-   - Run `/plan-api <specUrl>` to start the QA pipeline (plan → manual → auto) under `artifacts/<name>/`.
+   - Run `/test-plan <specUrl>` to start the QA workflow (`/test-plan` → `/manual-qa` →
+     `/auto-qa` → `/testops`) under `deliverables/<name>/`.
 
 For a combined UI+API app, run `node scripts/new-app.mjs <name> --kind both …` directly.

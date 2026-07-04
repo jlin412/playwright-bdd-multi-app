@@ -12,24 +12,26 @@ live in Project Memory (`.claude/project/`), never here.
 
 | File | Concern | Referenced by |
 |---|---|---|
-| [core-ui.md](core-ui.md) | UI functional coverage | UI planning / manual / automation |
-| [core-api.md](core-api.md) | API functional coverage | API planning / manual / automation |
+| [core-ui.md](core-ui.md) | UI functional coverage | UI test-plan / manual-qa / auto-qa |
+| [core-api.md](core-api.md) | API functional coverage | API test-plan / manual-qa / auto-qa |
 | [security.md](security.md) | Security (all domains) | UI, API, mobile, IoT |
 | [accessibility.md](accessibility.md) | Accessibility (UI, mobile) | UI, mobile |
 | [performance.md](performance.md) | Performance (all domains) | UI, API, mobile, IoT |
 | [mobile.md](mobile.md) | Mobile app coverage | mobile |
 | [iot.md](iot.md) | IoT ecosystem coverage | IoT |
 
-## Review-gate checklists
+## Review checklists
 
-A second kind of checklist answers *"is this artifact good enough to advance?"* — used by
-`/review` before `/approve`:
+A second kind of checklist answers *"is this deliverable good enough to build on?"* —
+displayed by each workflow command as Step 4 of the `qa-review` protocol and mirrored
+into the deliverable's Review Checklist section:
 
-| File | Gates |
-|---|---|
-| [review-plan.md](review-plan.md) | `plan.md` |
-| [review-manual.md](review-manual.md) | `manual.md` + `execution.md` |
-| [review-automation.md](review-automation.md) | `automation.md` + generated code |
+| File | Reviews | Command |
+|---|---|---|
+| [review-test-plan.md](review-test-plan.md) | `01-Test-Plan.md` | `/test-plan` |
+| [review-manual-qa.md](review-manual-qa.md) | `02-Manual-QA.md` + Gherkin updates | `/manual-qa` |
+| [review-auto-qa.md](review-auto-qa.md) | `03-Automation-QA.md` + generated code | `/auto-qa` |
+| [review-testops.md](review-testops.md) | `04-TestOps.md` | `/testops` |
 
 ## De-duplication rule
 

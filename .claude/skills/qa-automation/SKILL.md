@@ -1,42 +1,72 @@
 ---
 name: qa-automation
-description: Implement approved automation code, transcribing executed manual cases into tests aligned 1:1 with TC-*. Used by /auto-ui and /auto-api. Reuses existing framework assets, follows project conventions, validates with tsc + tests, and writes code + artifacts/<feature>/automation.md (Part B).
+description: Convert the approved Gherkin and manual cases into high-quality Playwright automation. Evaluates EVERY manual case, maximizes automation, explains and estimates every case not automated, generates tests/steps/POM/SOM/fixtures reuse-first, and iterates generate→run→fix locally until stable. Used by /auto-qa. Writes code into apps/<app>/ + deliverables/<feature>/03-Automation-QA.md.
 ---
 
-# QA Automation skill
+# Automation QA skill
 
-Generate or modify automation from the **approved** plan (`automation.md` Part A), **transcribing**
-executed cases (not inventing) and following the repo's conventions. Mode: `UI` or `API`.
+Mission: convert the approved Gherkin into high-quality Playwright automation. Inputs:
+`01-Test-Plan.md`, `02-Manual-QA.md`, the updated Gherkin in `apps/<app>/features/`,
+and the existing repository — framework, step definitions, page objects, fixtures, and
+conventions. Bias strongly toward Playwright best practices. **Maximize automation.**
 
-**Compose:** qa-workflow (state) · `.claude/project/conventions.md` (dual-style POM/SOM,
-three-section layout, locators, tags, where code is written) · the **qa-triage** skill
-(for `fail` cases) · template `automation.md` (Part B).
+**Compose:** `.claude/project/conventions.md` (dual-style POM/SOM, three-section layout,
+locators, tags, where code is written) · **qa-triage** (for `fail` cases) · template
+`.claude/templates/03-automation-qa.md`. The `/auto-qa` command runs the `qa-review`
+protocol after this skill.
 
-## Do
+## Decide (evaluate EVERY manual case)
 
-1. Read `artifacts/<feature>/automation.md` (Part A — the approved plan). Implement
-   **only** approved items.
-2. Carry each case's `TC-*` ID into the test/scenario title (and tags) — **no orphan
-   tests** that lack a `TC-*` parent.
-3. **Transcribe, don't invent**: assertions use the **intended** expected values from
-   `manual.md` verbatim (never the buggy observed value).
-4. `fail` cases → `@triage` reproduction tests asserting the *intended* result (see
-   qa-triage): expected-to-fail = the repro, excluded from `@smoke`/`@regression`, run via
-   `npm run test:triage` / `npm run test:bdd:triage`. Never also tag `@smoke`/`@regression`.
-5. Reuse existing `apps/<app>/` assets (features, steps, POM/SOM, fixtures, helpers,
-   selectors). Add new code **only** where the plan says.
-6. Follow `.claude/project/conventions.md`: dual-style POM/SOM + `@Given/@When/@Then`
+1. Read `02-Manual-QA.md`. Evaluate **every** `TC-*` case and gate it by its manual
+   execution status:
+   - `pass` → automate as a normal test asserting the intended result
+     (`@smoke`/`@regression`).
+   - `fail` → automate as a `@triage` **reproduction** asserting the *intended* result
+     (see **qa-triage**); excluded from smoke/regression. Never assert the buggy
+     observed value.
+   - `blocked` / `not-run` → normally not automatable — record as a documented gap
+     unless automation can safely supply what manual couldn't (e.g. seeded data).
+2. Within an automatable case, decide: already covered · a new scenario on an existing
+   feature/spec · a new feature/spec. **No test without a `TC-*` parent.**
+3. For every case **not** automated, record: **why**, possible automation approaches,
+   estimated effort, and a recommendation — it stays visible in the deliverable, not
+   silently dropped.
+4. Identify reusable assets in `apps/<app>/` (features, step decorators, POM/SOM,
+   fixtures, hooks, utilities, schemas, selectors, tags) before planning any new asset.
+
+## Implement
+
+5. Generate tests, step definitions, page objects, service objects, fixtures, and
+   helper code into `apps/<app>/`, following the existing architecture and
+   `.claude/project/conventions.md`: dual-style POM/SOM + `@Given/@When/@Then`
    decorators; register each fixture in **both** `specs/fixtures.ts` and
    `steps/fixtures.ts`; relative navigation; `getByRole`/`getByLabel`/`getByTestId`;
    auto-retrying assertions; `@Then` uses "should"; never edit `.features-gen/`.
-7. For a brand-new app under test, scaffold first (`/new-ui-app` or `/new-api-app`),
-   then implement.
-8. Validate: `npx tsc --noEmit` and the relevant `npm run test:<app>` /
-   `npm run test:bdd:<app>`. Report the run command and results.
+6. **Transcribe, don't invent**: assertions use the **intended** expected values from
+   `02-Manual-QA.md` verbatim. Carry each `TC-*` ID into the test/scenario title.
+7. Implementing a `@manual`-tagged scenario? Implement its steps, then retag it
+   (`@smoke`/`@regression` per its priority — or `@triage` for a fail repro).
+8. For a brand-new app under test, scaffold first (`/new-ui-app` / `/new-api-app`).
+
+## Stabilize (internal loop)
+
+9. Execute locally and iterate until stable:
+
+   ```
+   Generate → Run → Fix → Run → Pass
+   ```
+
+   Validate with `npx tsc --noEmit` plus the relevant `npm run test:<app>` /
+   `npm run test:bdd:<app>` (and `test:triage` / `test:bdd:triage` for repros — a
+   `@triage` test failing on the known defect is its expected, stable state). Re-run to
+   distinguish flake from failure. Report the run commands and results honestly.
 
 ## Output
 
 - Automation code under `apps/<app>/`.
-- `artifacts/<feature>/automation.md` — Part B (Implementation Report) + the § Traceability
-  ledger (each case's automation status + file; verify no orphans); update `automation.yaml`
-  (`substage: implemented`, validation fields).
+- `deliverables/<feature>/03-Automation-QA.md`: automation summary, coverage (the
+  `TC-*` ↔ test file/tag ledger — every automated test has a `TC-*` parent; every
+  `pass`/`fail` case is automated or an explained gap), automated cases, non-automated
+  cases (reasons, alternative approaches, effort, recommendation), execution results,
+  and framework/repository improvement observations — plus Review Checklist and Review
+  History.

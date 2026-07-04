@@ -1,13 +1,13 @@
 ---
 name: qa-triage
-description: Handle failed manual cases. A fail case is automated as a @triage reproduction test that asserts the INTENDED result (so it fails = a one-command replay with a trace) and is excluded from smoke/regression. Consumed by qa-manual-design and qa-automation; the seam for a future Bug Investigator workflow.
+description: Handle failed manual cases. A fail case is automated as a @triage reproduction test that asserts the INTENDED result (so it fails = a one-command replay with a trace) and is excluded from smoke/regression. Consumed by qa-manual and qa-automation; the seam for a future Bug Investigator workflow.
 ---
 
 # QA Triage skill
 
 A case with status `fail` is a **defect** — but it stays first-class and is still
-automated. This skill is the single home for the `@triage` rules that the manual and
-automation phases apply.
+automated. This skill is the single home for the `@triage` rules that the manual
+(`/manual-qa`) and automation (`/auto-qa`) phases apply.
 
 ## Rules
 
@@ -23,7 +23,8 @@ automation phases apply.
 
 ## Handoff
 
-`@triage` tests wait for reviewer sign-off. Full defect triage — root-cause analysis,
-structured bug reports, fix verification — is a future **Bug Investigator** workflow that
-will build on this seam (and, once the Artifacts layer lands, on each feature's
-`bugs.md`). For now this skill defines the repro contract the pipeline already follows.
+Defects are documented in `deliverables/<feature>/02-Manual-QA.md` § Possible Defects
+(and re-surfaced by `/testops` in the release-readiness verdict). Full defect triage —
+root-cause analysis, structured bug reports, fix verification — is a future
+**Bug Investigator** workflow that will build on this seam. For now this skill defines
+the repro contract the workflow already follows.

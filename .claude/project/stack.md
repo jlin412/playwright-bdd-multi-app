@@ -70,6 +70,6 @@ into its generated projects' `use.baseURL`. Projects encode only browser/style.
 
 ## AI-authoring support
 
-- Playwright MCP server in `.vscode/mcp.json` — live browser recon for `/manual-*`.
+- Playwright MCP server in `.vscode/mcp.json` — live browser recon for `/manual-qa`.
 - `apps/<name>/recon/` — one-off exploration scripts to discover real selectors/flows
   before writing POMs. Not part of the test suite; run directly with `node`.

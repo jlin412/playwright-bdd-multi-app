@@ -1,27 +1,28 @@
 # Skills — reusable QA expertise
 
-Portable QA **methodology**: *how* to run each phase of the testing lifecycle. A skill
-composes the other layers rather than restating them — it references Checklists
-(coverage), Templates (artifact shape), and Project Memory (repo facts), and calls
-`qa-workflow` for state. Skills are mode-agnostic; the command passes `UI` or `API`.
+Portable QA **methodology**: *how* each specialist works. A skill composes the other
+layers rather than restating them — it references Checklists (coverage + review gates),
+Templates (deliverable shape), and Project Memory (repo facts). Skills are mode-agnostic
+(`UI` / `API` / both is inferred from the target).
 
-| Skill | Phase | Used by |
-|---|---|---|
-| [qa-planning](qa-planning/SKILL.md) | Planning | `/plan-ui`, `/plan-api` |
-| [qa-manual-design](qa-manual-design/SKILL.md) | Manual design + live execution | `/manual-ui`, `/manual-api` |
-| [qa-automation-plan](qa-automation-plan/SKILL.md) | Automation planning | `/auto-plan-ui`, `/auto-plan-api` |
-| [qa-automation](qa-automation/SKILL.md) | Automation implementation | `/auto-ui`, `/auto-api` |
-| [qa-triage](qa-triage/SKILL.md) | Failure analysis (seam) | consumed by manual + automation |
-| [qa-workflow](qa-workflow/SKILL.md) | State protocol | every phase (START/FINISH) |
+| Skill | Specialist | Used by | Deliverable |
+|---|---|---|---|
+| [qa-test-plan](qa-test-plan/SKILL.md) | Test Plan | `/test-plan` | `01-Test-Plan.md` |
+| [qa-manual](qa-manual/SKILL.md) | Manual QA | `/manual-qa` | `02-Manual-QA.md` + Gherkin |
+| [qa-automation](qa-automation/SKILL.md) | Automation QA | `/auto-qa` | `03-Automation-QA.md` + code |
+| [qa-testops](qa-testops/SKILL.md) | TestOps | `/testops` | `04-TestOps.md` |
+| [qa-review](qa-review/SKILL.md) | (shared) | every workflow command | the interactive review (Steps 2–6) |
+| [qa-triage](qa-triage/SKILL.md) | (shared) | consumed by manual + automation | `@triage` repro contract |
 
 ## Design rules
 
-- **Focused, not giant.** One discipline per skill; shared concerns are referenced,
-  never copied.
-- **Compose the layers.** Coverage → `.claude/checklists/`; artifact shape →
-  `.claude/templates/`; repo facts → `.claude/project/`; state → `qa-workflow`.
-- **Portable.** No repo-specific paths beyond the stable pipeline artifacts; anything
-  repo-specific is read from Project Memory.
+- **Focused, not giant.** One discipline per skill; shared concerns (`qa-review`,
+  `qa-triage`) are referenced, never copied.
+- **Compose the layers.** Coverage → `.claude/checklists/`; deliverable shape →
+  `.claude/templates/`; repo facts → `.claude/project/`.
+- **Portable.** No repo-specific paths beyond the stable `deliverables/<feature>/`
+  layout; anything repo-specific is read from Project Memory.
 
-Each skill has a paired subagent in `.claude/agents/` (same name) for separate-context
-delegation via the Task tool; the agent is a thin pointer to the skill.
+The four specialist skills each have a paired subagent in `.claude/agents/` (same name)
+for separate-context delegation of the **generation** step. The `qa-review` protocol
+always runs in the main conversation — it is a dialogue with the user.

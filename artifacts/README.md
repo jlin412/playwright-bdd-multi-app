@@ -1,48 +1,15 @@
-# Artifacts — the durable source of truth
+# Artifacts — legacy v3 archive
 
-Every workflow stage writes here, **outside `.claude/`**, so its output can be reviewed,
-edited, approved, versioned, committed, and resumed later. **Chat history is never
-required to continue work** — these files are the record.
+**This layout is superseded.** The QA Toolkit v4 writes its deliverables to
+[`deliverables/<feature>/`](../deliverables/README.md)
+(`01-Test-Plan.md` → `02-Manual-QA.md` → `03-Automation-QA.md` → `04-TestOps.md`,
+produced by `/test-plan` → `/manual-qa` → `/auto-qa` → `/testops`).
 
-One folder per QA work unit (`<feature>` = an app like `petstore`, or a feature slug):
+The folders here (`artifacts/<feature>/` with `plan.md`, `manual.md`, `execution.md`,
+`automation.md`, `bugs.md`, `history.md` + YAML sidecars) are the v3 pipeline's output,
+kept as a **read-only archive** — [`petstore/`](petstore/) is a complete worked example
+of that era. Nothing writes here anymore.
 
-```
-artifacts/<feature>/
-  plan.md         plan.yaml          # Planning        (qa-planning · /plan-*)
-  manual.md       manual.yaml        # Manual Testing  (qa-manual-design · /manual-*)
-  execution.md                       # Execution log   (manual + automated runs)
-  automation.md   automation.yaml    # Automation      (qa-automation-plan + qa-automation)
-  bugs.md                            # Failure Analysis (qa-triage; defect register)
-  history.md                         # Continuous Improvement (transition log + notes)
-```
-
-Stage skeletons live in [`.claude/templates/`](../.claude/templates/); the workflow that
-sequences them is [`.claude/workflow/`](../.claude/workflow/). Automation **code** is not
-here — it lands in `apps/<app>/` per Project Memory conventions.
-
-## Metadata (the `.yaml` sidecars)
-
-Gated stages (`plan`, `manual`, `automation`) each carry a YAML sidecar that makes the
-stage machine-readable and drives workflow state:
-
-| Field | Meaning |
-|---|---|
-| `stage` | which lifecycle stage this is |
-| `status` | `draft` · `in-review` · `approved` · `rejected` · `blocked` · `stale` |
-| `owner` | who holds the stage |
-| `created` / `updated` | dates |
-| `version` | bumped on each `/revise` |
-| `depends_on` | upstream stage(s) that must be `approved` first |
-| `next_stage` | the stage this unblocks |
-| `approved_by` / `approval_date` | set by `/approve` |
-
-`execution.md`, `bugs.md`, and `history.md` are **append-only logs** (no approval gate,
-no sidecar).
-
-## State is derived, not stored separately
-
-Workflow state (current stage, completed, pending review, blocked, next command) is
-computed from the sidecars — see
-[`.claude/workflow/pipeline.md`](../.claude/workflow/pipeline.md#workflow-state-derived-never-chat).
-Read it with `/status`; advance it with `/review`, `/approve`, `/revise`; inspect the log
-with `/history`.
+To continue QA on one of these features, run `/test-plan <feature>` and point it at the
+old artifacts as supplied context — the v3 → v4 mapping is documented in the root
+`README.md` § "Migration from v3".
