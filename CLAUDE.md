@@ -160,7 +160,10 @@ then a feedback loop) recorded in the deliverable's Review History. On demand:
 `/testops repo` assesses the whole repo with trends from the append-only
 `deliverables/_repo/ledger.md` (every `/testops` run appends to it); a PR-triggered
 GitHub Action (`.github/workflows/testops.yml`) posts the release-readiness verdict as
-a sticky comment. `/status` derives progress from which deliverables exist.
+a sticky comment; `/testops-ci [PR#]` closes the loop on that CI run — reads per-test
+retry outcomes from the `pwreport-*` artifacts (flaky vs failed), discusses each issue
+one at a time, applies agreed test-side fixes verified locally, and pushes until green
+(max 3 fix iterations). `/status` derives progress from which deliverables exist.
 `/bootstrap` regenerates `.claude/project/`, including distilling `overridden:` review
 decisions into `review-calibration.md`. Scaffold a new target with `/new-ui-app` /
 `/new-api-app`, then run the workflow.

@@ -70,6 +70,14 @@ jobs:
           path: testops-results/
           retention-days: 7
 
+      # Per-test JSON report (flaky-vs-failed retry outcomes) for the /testops-ci
+      # loop. Name must NOT match testops-* — the verdict job globs that pattern.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pwreport-${{ matrix.suite }}
+          path: pw-report/
+          retention-days: 7
+
       - name: Mark suite result
         if: steps.run.outputs.outcome == 'fail'
         run: exit 1

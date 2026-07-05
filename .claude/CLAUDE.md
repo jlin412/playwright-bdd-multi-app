@@ -49,7 +49,10 @@ of re-asking settled questions.
 `/status` derives progress from which deliverables exist. Utilities: `/new-ui-app`,
 `/new-api-app` (scaffold a target app), `/bootstrap` (regenerate Project Memory +
 review calibration), `/smoke` and `/regression` (run those suites on demand — the
-run-only slice of `/testops`, no deliverable or review). A `fail` case becomes a `@triage` reproduction test — see the
+run-only slice of `/testops`, no deliverable or review), `/testops-ci [PR#]` (close the
+loop on a PR's CI run: classify failures/flakes from per-test retry outcomes, discuss
+one issue at a time, fix → verify locally → push, max 3 iterations — the `qa-testops-ci`
+skill). A `fail` case becomes a `@triage` reproduction test — see the
 `qa-triage` skill (including its retag-on-fix rule) and
 [`project/conventions.md`](project/conventions.md) for the tag rules (including
 `@manual` for not-yet-implemented scenarios).

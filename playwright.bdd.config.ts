@@ -59,6 +59,8 @@ export default defineConfig({
       outputFile: 'cucumber-report/index.html',
       externalAttachments: true,
     }],
+    // Per-test JSON (incl. flaky-vs-failed retry outcomes) for the /testops-ci loop.
+    ...(process.env.CI ? ([['json', { outputFile: 'pw-report/results.json' }]] as const) : []),
   ],
   use: {
     screenshot: 'only-on-failure',
