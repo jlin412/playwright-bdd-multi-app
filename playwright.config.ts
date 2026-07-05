@@ -54,6 +54,8 @@ export default defineConfig({
   reporter: [
     ['list'],
     ['html', { open: 'never' }],
+    // Per-test JSON (incl. flaky-vs-failed retry outcomes) for the /testops-ci loop.
+    ...(process.env.CI ? ([['json', { outputFile: 'pw-report/results.json' }]] as const) : []),
   ],
   use: {
     screenshot: 'only-on-failure',
