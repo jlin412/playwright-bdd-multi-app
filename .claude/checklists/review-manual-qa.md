@@ -10,6 +10,7 @@ into the deliverable.
 - [ ] `fail` cases are tagged `@triage` and listed under Possible Defects.
 - [ ] `blocked`/`not-run` cases document the expected behavior instead of a run.
 - [ ] Ambiguities and possible defects are recorded with enough detail to reproduce.
+- [ ] Each `TC-*` was checked against existing implementations (BDD features + spec tests) first; already-implemented cases are recorded under Existing Coverage with a citation and skip Gherkin authoring (but are still live-validated when safe).
 - [ ] Gherkin updates are reuse-first: existing feature files and step definitions extended before new ones created.
 - [ ] Scenarios without implemented steps are tagged `@manual` (not `@smoke`/`@regression`), so BDD runs stay green.
 - [ ] No automation code (POM/SOM/steps implementation is `/auto-qa`).

@@ -49,6 +49,33 @@ anything gated by credentials or data you don't have, or blocked by bot protecti
 
 Distill findings into the case — never paste raw snapshots or full response dumps.
 
+## Existing coverage check (before authoring)
+
+Before authoring any Gherkin, decide per `TC-*` **whether the case is already
+implemented as a real test** — this gate runs first; reuse-first authoring runs only
+for the cases it leaves uncovered.
+
+For every planned/discovered `TC-*`, search existing implementations across **both**
+styles:
+
+- **BDD** — grep `apps/<app>/features/*.feature` for the `TC-*` ID in scenario titles
+  and for the behavior, and confirm the scenario's steps are actually implemented
+  (backed by POM/SOM `@Given/@When/@Then` decorators). A scenario tagged `@manual`
+  (steps not yet implemented) does **not** count as covered.
+- **Spec** — grep `apps/<app>/specs/**` for an existing spec-style test covering the
+  same behavior.
+
+Classify each case:
+
+- **covered** — a real, non-`@manual` test already exists → record
+  `Existing Coverage: <file>:<scenario|test name>`, **skip Gherkin authoring** for it,
+  but still **live-validate** it if safe (capture intended vs actual as normal).
+- **uncovered** — no real test exists → proceed to the reuse-first authoring below.
+
+Ordering: **coverage check → (uncovered only) reuse-first authoring.** The coverage
+check governs *whether to author at all*; reuse-first still governs *where* new
+scenarios land and *which* steps they reuse.
+
 ## Create or update Gherkin (reuse-first)
 
 Turn the validated cases into Gherkin in `apps/<app>/features/` — this is the
@@ -76,8 +103,9 @@ deliverable so the plan ↔ manual mapping stays auditable.
 
 - `deliverables/<feature>/02-Manual-QA.md` — manual validation summary, the case table
   (ID, preconditions, test data, steps, **intended** result, **actual** result, status),
-  discovered issues and ambiguities, possible defects, and the repository/Gherkin
-  updates made — plus Review Checklist and Review History.
+  discovered issues and ambiguities, possible defects, the **existing coverage** found
+  per case (which tests already implement it), and the repository/Gherkin updates made
+  — plus Review Checklist and Review History.
 - Gherkin updates in `apps/<app>/features/` (+ any updated existing steps' feature text).
 
 No automation code — POM/SOM/step implementation is `/auto-qa`.

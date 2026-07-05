@@ -42,6 +42,15 @@
 
 <!-- Status: open · triaged · fixed · wont-fix · cannot-reproduce. -->
 
+## Existing Coverage
+
+| Test ID | Covered by (file:scenario/test) | Layer | Action |
+|---|---|---|---|
+
+<!-- Layer: BDD | spec. Action: reused (no Gherkin authored) — covered cases skip
+     Gherkin generation but are still live-validated when safe. Only real, non-@manual
+     tests count as covered. -->
+
 ## Repository Updates (Gherkin)
 
 | File | Change | Scenarios (TC-*) | Reused steps | New steps needed | Tags |
