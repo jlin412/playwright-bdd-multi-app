@@ -1,8 +1,8 @@
-# Claude Code QA Toolkit v4 — Index
+# Claude Code QA Toolkit v5 — Index
 
-This repo's AI-native QA toolkit is four specialist agents behind four slash commands,
-organized into portable layers plus repo-specific memory. This file is a **map** — the
-content lives in the layers below.
+This repo's AI-native QA toolkit is four sequential specialist agents behind four slash
+commands, plus an on-demand Bug Investigator, organized into portable layers plus
+repo-specific memory. This file is a **map** — the content lives in the layers below.
 
 | Need | Go to |
 |---|---|
@@ -28,6 +28,12 @@ Requirements → /test-plan → /manual-qa → /auto-qa → /testops
 | `/auto-qa` | Automation QA — evaluate every case, maximize automation, generate → run → fix until stable | `03-Automation-QA.md` + code in `apps/<app>/` |
 | `/testops` | TestOps — run smoke/regression/UI/API/cross-browser, flake + failure analysis, release readiness | `04-TestOps.md` |
 
+On demand (not stages): `/investigate <feature>` — Bug Investigator, root-causes one
+open defect from `02-Manual-QA.md § Possible Defects` → `05-Investigations.md`;
+`/testops repo` — whole-repo assessment with trends from the append-only
+`deliverables/_repo/ledger.md` (every `/testops` run appends to it). CI posts the same
+release verdict on PRs (`.github/workflows/testops.yml`, report-only).
+
 Running the next command **implicitly accepts** the previous stage. Every workflow
 command follows the same pattern (the `qa-review` skill): generate → **open the
 deliverable** → Executive Summary → Review Checklist (✓/✗) → interactive review, **one
@@ -35,9 +41,16 @@ question at a time** (recommendation + reasoning + impact) → feedback loop unt
 user has none → **stop** (never auto-continue). Each deliverable carries
 **Executive Summary · Review Checklist · Review History** — the audit trail.
 
+Review recommendations calibrate to your recorded preferences:
+[`.claude/project/review-calibration.md`](project/review-calibration.md), distilled by
+`/bootstrap` from `overridden:` Review History rows and applied by `qa-review` instead
+of re-asking settled questions.
+
 `/status` derives progress from which deliverables exist. Utilities: `/new-ui-app`,
-`/new-api-app` (scaffold a target app), `/bootstrap` (regenerate Project Memory).
-A `fail` case becomes a `@triage` reproduction test — see the `qa-triage` skill and
+`/new-api-app` (scaffold a target app), `/bootstrap` (regenerate Project Memory +
+review calibration), `/smoke` and `/regression` (run those suites on demand — the
+run-only slice of `/testops`, no deliverable or review). A `fail` case becomes a `@triage` reproduction test — see the
+`qa-triage` skill (including its retag-on-fix rule) and
 [`project/conventions.md`](project/conventions.md) for the tag rules (including
 `@manual` for not-yet-implemented scenarios).
 

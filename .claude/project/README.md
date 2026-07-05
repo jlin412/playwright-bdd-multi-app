@@ -16,6 +16,9 @@ project. Keeping them here isolates them from the portable layers:
   (dual-style POM/SOM, three-section layout, locators, tags, where `/auto-qa` writes).
 - [stack.md](stack.md) — framework facts: app registry, generated projects, env
   model, apps under test, run matrix.
+- [review-calibration.md](review-calibration.md) — learned reviewer preferences,
+  distilled by `/bootstrap` from Review History overrides; read by `qa-review` so
+  settled questions aren't re-asked.
 
 ## Why this exists
 

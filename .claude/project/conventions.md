@@ -21,7 +21,7 @@ Generate into the target app under `apps/<app>/`:
 
 - **Reuse before creating**: existing features, step decorators, POM/SOM, fixtures, hooks, helpers, selectors, and schemas. Never duplicate. Inspect only the relevant `apps/<app>/` files.
 - **Dual-style classes**: every POM/SOM exposes a plain helper method **and** a thin `@Given/@When/@Then` decorator over it — no standalone single-fixture step files. Register each new fixture in **both** `specs/fixtures.ts` and `steps/fixtures.ts`.
-- **POM three-section layout** (`Assertions` / `Actions` / `BDD step decorators`) — reference [`apps/yosemitecinema/pom/auth.page.ts`](../../apps/yosemitecinema/pom/auth.page.ts).
+- **POM three-section layout** (`Assertions` / `Actions` / `BDD step decorators`) — reference [`apps/saucedemo/pom/login.page.ts`](../../apps/saucedemo/pom/login.page.ts).
 - **Relative navigation** (`page.goto('/')`, `request.get('/path')`); base URL comes from `app.config.ts` / `apps/<app>/.env`; for an API base path (e.g. `/v2`) put the origin in `baseURL` and the prefix on endpoint paths.
 - **Locators**: `getByRole` / `getByLabel` / `getByTestId`. Auto-retrying assertions; no hard waits.
 - Every `@Then` uses the verb **"should"**.

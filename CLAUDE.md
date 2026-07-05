@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A **multi-app** Playwright + `playwright-bdd` template. Each app under test lives
 in `apps/<name>/` and is exercised in two styles (spec + BDD) from one POM/SOM
-class layer. Bundled apps: `saucedemo` (UI), `petstore` (API), `yosemitecinema`
-(UI + API). See `README.md` for the user-facing overview.
+class layer. Bundled apps: `saucedemo` (UI), `petstore` (API). See `README.md` for
+the user-facing overview.
 
 ## Commands
 
@@ -110,7 +110,7 @@ edit by hand. The `test:bdd*` scripts run it automatically.
 
 ### Env / config
 
-- **Per-app env**: each app has `apps/<name>/.env` (gitignored) + `apps/<name>/.env.example` (committed). `lib/load-env.ts` (imported by both configs *before* `config/apps`) loads root `.env` then every `apps/<name>/.env`; real/CI env wins (`override: false`). Keys are app-unique/prefixed (one shared process) — e.g. `SAUCEDEMO_BASE_URL`+`SAUCE_USERNAME`/`SAUCE_PASSWORD`, `YOSEMITECINEMA_BASE_URL`+`TEST_MEMBER_EMAIL`/`TEST_MEMBER_PASSWORD`.
+- **Per-app env**: each app has `apps/<name>/.env` (gitignored) + `apps/<name>/.env.example` (committed). `lib/load-env.ts` (imported by both configs *before* `config/apps`) loads root `.env` then every `apps/<name>/.env`; real/CI env wins (`override: false`). Keys are app-unique/prefixed (one shared process) — e.g. `SAUCEDEMO_BASE_URL`+`SAUCE_USERNAME`/`SAUCE_PASSWORD`, `PETSTORE_BASE_URL`.
 - `<NAME>_BASE_URL` overrides an app's base URL; read by `apps/<name>/app.config.ts`.
 - `SMOKE_ONLY=1` excludes `specs/e2e/workflows/**` + `trace-fail` specs, and `@fail`/`@tracefail` BDD scenarios.
 - CI sets `forbidOnly`, `retries: 1`; BDD caps workers at 2. In CI, pass secrets as workflow env vars (they override the absent per-app `.env`).
@@ -132,37 +132,45 @@ in `config/apps.ts`, and adds `test:<name>` / `test:bdd:<name>` scripts. Run the
 engine directly for a combined app: `node scripts/new-app.mjs <name> --kind both …`.
 `apps/_template` is excluded from runs (`testIgnore`) but must still type-check.
 
-## QA Toolkit v4 (Claude Code commands)
+## QA Toolkit v5 (Claude Code commands)
 
-An AI-native QA toolkit ships as slash commands: four specialist agents in a strictly
-sequential, review-driven workflow. Each stage writes a durable deliverable under
-`deliverables/<feature>/`; automation code lands in `apps/<app>/`. Overview + migration
-guide: `README.md` § "QA Toolkit v4". Layers:
+An AI-native QA toolkit ships as slash commands: four sequential specialist agents in a
+strictly sequential, review-driven workflow, plus an on-demand Bug Investigator. Each
+stage writes a durable deliverable under `deliverables/<feature>/`; automation code
+lands in `apps/<app>/`. Overview + migration guide: `README.md` § "QA Toolkit v5".
+Layers:
 
 - **Commands** (`.claude/commands/`) — thin launchers; each workflow command generates,
   then owns the complete interactive review of its deliverable.
 - **Skills** (`.claude/skills/`) — reusable QA methodology (`qa-test-plan`, `qa-manual`,
-  `qa-automation`, `qa-testops`, plus shared `qa-review` + `qa-triage`); the four
-  specialists have paired subagents in `.claude/agents/`.
+  `qa-automation`, `qa-testops`, `qa-investigate`, plus shared `qa-review` +
+  `qa-triage`); the five specialists have paired subagents in `.claude/agents/`.
 - **Checklists** (`.claude/checklists/`) — single-source coverage + review checklists.
-- **Templates** (`.claude/templates/`) — deliverable skeletons (`01`–`04`).
-- **Project Memory** (`.claude/project/`) — this repo's conventions + stack.
+- **Templates** (`.claude/templates/`) — deliverable skeletons (`01`–`05`).
+- **Project Memory** (`.claude/project/`) — this repo's conventions + stack + review
+  calibration (learned reviewer preferences).
 - **Deliverables** (`deliverables/<feature>/`) — the durable source of truth
   (`artifacts/` is the read-only v3 archive).
 
 Workflow: `/test-plan` → `/manual-qa` → `/auto-qa` → `/testops`. There is no approval
 command and no state machine — running the next command implicitly accepts the previous
 stage, and each command finishes with an interactive review (one question at a time,
-then a feedback loop) recorded in the deliverable's Review History. `/status` derives
-progress from which deliverables exist. `/bootstrap` regenerates `.claude/project/`.
-Scaffold a new target with `/new-ui-app` / `/new-api-app`, then run the workflow.
+then a feedback loop) recorded in the deliverable's Review History. On demand:
+`/investigate <feature>` root-causes an open defect (`05-Investigations.md`);
+`/testops repo` assesses the whole repo with trends from the append-only
+`deliverables/_repo/ledger.md` (every `/testops` run appends to it); a PR-triggered
+GitHub Action (`.github/workflows/testops.yml`) posts the release-readiness verdict as
+a sticky comment. `/status` derives progress from which deliverables exist.
+`/bootstrap` regenerates `.claude/project/`, including distilling `overridden:` review
+decisions into `review-calibration.md`. Scaffold a new target with `/new-ui-app` /
+`/new-api-app`, then run the workflow.
 
 ## Conventions
 
 The code-generation conventions — dual-style POM/SOM, the three-section POM layout, BDD
 file naming, feature-file rules, locators, and tags — are the single-source contract in
 Project Memory: [`.claude/project/conventions.md`](.claude/project/conventions.md)
-(reference POM: `apps/yosemitecinema/pom/auth.page.ts`). Stack + full run matrix:
+(reference POM: `apps/saucedemo/pom/login.page.ts`). Stack + full run matrix:
 [`.claude/project/stack.md`](.claude/project/stack.md).
 
 ### Pre-merge checklist
@@ -174,6 +182,6 @@ npm run test:bdd                       # BDD smoke (all apps)
 npm run test:bdd:regression            # full BDD regression
 ```
 
-All must be green. External targets (yosemitecinema, petstore) can be slow/flaky —
-prefer `expect.poll` and generous timeouts; assert shape over exact counts; re-run
-before declaring a flake a failure.
+All must be green. External targets (petstore) can be slow/flaky — prefer
+`expect.poll` and generous timeouts; assert shape over exact counts; re-run before
+declaring a flake a failure.

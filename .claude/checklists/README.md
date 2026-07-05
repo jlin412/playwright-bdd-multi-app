@@ -32,6 +32,7 @@ into the deliverable's Review Checklist section:
 | [review-manual-qa.md](review-manual-qa.md) | `02-Manual-QA.md` + Gherkin updates | `/manual-qa` |
 | [review-auto-qa.md](review-auto-qa.md) | `03-Automation-QA.md` + generated code | `/auto-qa` |
 | [review-testops.md](review-testops.md) | `04-TestOps.md` | `/testops` |
+| [review-investigation.md](review-investigation.md) | `05-Investigations.md` | `/investigate` |
 
 ## De-duplication rule
 

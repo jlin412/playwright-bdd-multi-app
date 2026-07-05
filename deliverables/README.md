@@ -1,6 +1,6 @@
 # Deliverables — the durable source of truth
 
-Every v4 workflow stage writes here, **outside `.claude/`**, so its output can be
+Every workflow stage writes here, **outside `.claude/`**, so its output can be
 reviewed, edited, versioned, committed, and resumed later. **Chat history is never
 required to continue work** — these files are the record.
 
@@ -12,7 +12,12 @@ deliverables/<feature>/
   02-Manual-QA.md       # /manual-qa  — live validation + the Gherkin spec for automation
   03-Automation-QA.md   # /auto-qa    — automation coverage report (code lands in apps/<app>/)
   04-TestOps.md         # /testops    — suite execution, flake analysis, release readiness
+  05-Investigations.md  # /investigate — on demand: defect root-cause + bug reports (not a stage)
 ```
+
+Repo-level TestOps lives in `deliverables/_repo/` (not a feature): `TestOps.md`
+(`/testops repo` — whole-repo assessment with trends) and `ledger.md`, the append-only
+run ledger **every** `/testops` run adds per-suite rows to — the trend source.
 
 Skeletons live in [`.claude/templates/`](../.claude/templates/). Automation **code** is
 not here — it lands in `apps/<app>/` per
@@ -36,6 +41,8 @@ Requirements → /test-plan → /manual-qa → /auto-qa → /testops
 - `/status` reports each feature's progress from the files alone.
 - Re-running a stage command **updates** the existing deliverable and appends to its
   Review History.
+- `/investigate <feature>` is on demand, not a stage — it appends one section per
+  investigated defect to `05-Investigations.md` and never blocks the sequence.
 
 ## Legacy (v3)
 

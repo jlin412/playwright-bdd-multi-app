@@ -1,11 +1,11 @@
 ---
 name: qa-review
-description: The shared interactive review protocol every v4 workflow command runs after generating its deliverable — open the file, present an Executive Summary and Review Checklist, ask review questions ONE at a time (each with recommendation, reasoning, expected impact), then loop on open feedback until the user has none. Used by /test-plan, /manual-qa, /auto-qa, /testops. Never advances to the next workflow stage.
+description: The shared interactive review protocol every workflow command runs after generating its deliverable — open the file, present an Executive Summary and Review Checklist, ask review questions ONE at a time (each with recommendation, reasoning, expected impact), then loop on open feedback until the user has none. Used by /test-plan, /manual-qa, /auto-qa, /testops, /investigate. Consults .claude/project/review-calibration.md so settled preferences are applied, not re-asked. Never advances to the next workflow stage.
 ---
 
 # QA Review skill — the interactive review protocol
 
-In v4 the command **owns the complete review experience**. There is no separate review
+The command **owns the complete review experience**. There is no separate review
 or approval command — running the *next* workflow command implicitly accepts this stage.
 This skill is the single definition of Steps 2–6 that every workflow command runs after
 its specialist agent generates the deliverable (Step 1).
@@ -66,7 +66,8 @@ Do you agree?
 The user responds naturally (agree, disagree, redirect, partial). Apply their decision
 to the deliverable **immediately** — edit the file before asking the next question — and
 record it in **Review History**. If they disagree, their direction wins; record what
-changed and why.
+changed and why, and start the Decision / Resolution cell with `overridden:` — the
+grep-able marker `/bootstrap` mines to calibrate future recommendations.
 
 ## Step 6 — Feedback loop
 
@@ -97,3 +98,11 @@ v3's approval metadata. Append one row per question and per piece of feedback:
 `Type`: `question` (Step 5) or `feedback` (Step 6). Keep rows one line each — this is a
 ledger, not a transcript. Re-running a stage command appends to the existing history,
 never erases it.
+
+## Calibration (learned preferences)
+
+Before selecting Step-5 questions, read `.claude/project/review-calibration.md` (if
+present). A preference recorded there is **settled**: apply it instead of re-asking,
+and add a Review History row with `calibration` at the start of the Decision /
+Resolution cell so the trail shows why no question was asked. The `overridden:` markers
+this protocol records are what `/bootstrap` later distills into that file.

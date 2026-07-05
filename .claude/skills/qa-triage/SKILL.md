@@ -1,6 +1,6 @@
 ---
 name: qa-triage
-description: Handle failed manual cases. A fail case is automated as a @triage reproduction test that asserts the INTENDED result (so it fails = a one-command replay with a trace) and is excluded from smoke/regression. Consumed by qa-manual and qa-automation; the seam for a future Bug Investigator workflow.
+description: Handle failed manual cases. A fail case is automated as a @triage reproduction test that asserts the INTENDED result (so it fails = a one-command replay with a trace) and is excluded from smoke/regression. Consumed by qa-manual and qa-automation; the repro contract the Bug Investigator (/investigate) builds on.
 ---
 
 # QA Triage skill
@@ -21,10 +21,18 @@ automated. This skill is the single home for the `@triage` rules that the manual
 - Never also tag a `@triage` test `@smoke`/`@regression`.
 - `blocked` / `not-run` cases are **not** automated — they are documented coverage gaps.
 
+## On fix (retag rule)
+
+The repro asserts the intended result, so a landed fix makes it **pass**. That is the
+signal to promote it: remove `@triage`, tag it `@regression` (it is now a true
+regression test), and set the defect's row in `02-Manual-QA.md § Possible Defects` to
+`fixed`.
+
 ## Handoff
 
 Defects are documented in `deliverables/<feature>/02-Manual-QA.md` § Possible Defects
 (and re-surfaced by `/testops` in the release-readiness verdict). Full defect triage —
-root-cause analysis, structured bug reports, fix verification — is a future
-**Bug Investigator** workflow that will build on this seam. For now this skill defines
-the repro contract the workflow already follows.
+root-cause analysis, the structured bug report, fix verification — is the
+**Bug Investigator**: `/investigate <feature>` (the `qa-investigate` skill). It replays
+this skill's repro for fresh evidence and appends to
+`deliverables/<feature>/05-Investigations.md`.
