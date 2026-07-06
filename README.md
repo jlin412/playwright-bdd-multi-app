@@ -32,18 +32,20 @@ apps/<name>/
   specs/api/*.spec.ts  # spec-style API tests
   steps/fixtures.ts    # BDD fixtures (extends playwright-bdd)
   steps/hooks.ts       # BDD Before/After
-  features/*.feature   # Gherkin scenarios (tag @smoke / @regression / @ui / @api)
+  features/*.feature   # Gherkin scenarios — UI only (tag @smoke / @regression / @ui)
 
 config/apps.ts         # the app registry — imported by both Playwright configs
 lib/app-config.ts      # AppDescriptor type + helpers
 playwright.config.ts       # spec projects, generated from the registry
-playwright.bdd.config.ts   # one defineBddConfig per app, generated from the registry
+playwright.bdd.config.ts   # one defineBddConfig per UI app, generated from the registry
 scripts/new-app.mjs    # scaffold engine (behind /new-api-app and /new-ui-app)
 ```
 
-**One class layer, two styles.** Every POM/SOM class exposes plain helper methods
-(consumed by specs) *and* `@Given/@When/@Then` decorators (consumed by BDD), so a
-behavior is written once and reused by both styles.
+**One class layer.** Every POM/SOM class exposes plain helper methods (consumed by
+specs) *and* `@Given/@When/@Then` decorators, so a behavior is written once and
+reused. **UI** apps run both styles (spec + BDD); **API** coverage is **spec-only**
+— an API SOM keeps its decorators only so it can back UI BDD steps, never its own
+feature file.
 
 **URLs are decoupled from projects.** Page/Service objects navigate with *relative*
 paths (`page.goto('/')`, `request.get('/path')`). Each app's `baseURL` flows into
@@ -69,35 +71,31 @@ npm run test:api                  # all API spec tests
 npm run test:ui                   # all UI spec tests (smoke)
 npm run test:regression           # all UI spec tests incl. multi-step workflows
 
-# By app (shortcut scripts — one per app, spec + BDD)
+# By app (shortcut scripts — UI apps get spec + BDD, API apps spec only)
 npm run test:saucedemo            # spec smoke for saucedemo (all 3 browsers)
 npm run test:bdd:saucedemo        # BDD for saucedemo
-npm run test:petstore             # spec for petstore
-npm run test:bdd:petstore         # BDD for petstore
+npm run test:petstore             # spec for petstore (spec-only; no BDD)
 # (equivalent path filter: npx playwright test apps/<name>)
-# /new-api-app and /new-ui-app add test:<name> + test:bdd:<name> automatically.
+# /new-ui-app adds test:<name> + test:bdd:<name>; /new-api-app adds test:<name> only.
 
 # By project (browser/style + app)
 npx playwright test --project=ui-saucedemo-chromium
 npx playwright test --project=api-petstore
 npx playwright test -c playwright.bdd.config.ts --project=bdd-ui-saucedemo-firefox
 
-# BDD by tag
+# BDD by tag (UI only)
 npm run test:bdd:ui               # @ui scenarios
-npm run test:bdd:api              # @api scenarios
 ```
 
 Generated project names follow `ui-<app>-<browser>`, `api-<app>`,
-`bdd-ui-<app>-<browser>`, `bdd-api-<app>`.
+`bdd-ui-<app>-<browser>`. API is spec-only, so there is no `bdd-api-<app>` project.
 
 ### Filter BDD by feature and/or tag expression
 
-The per-app BDD scripts accept `--feature <name>` and `--tags "<expr>"` (full
-cucumber tag expressions: `and` / `or` / `not` / parens). Pass them after `--`:
+The per-app BDD scripts (UI apps) accept `--feature <name>` and `--tags "<expr>"`
+(full cucumber tag expressions: `and` / `or` / `not` / parens). Pass them after `--`:
 
 ```bash
-npm run test:bdd:petstore -- --feature pet            # only pet.feature
-npm run test:bdd:petstore -- --tags "@smoke and @api" # tag expression
 npm run test:bdd:saucedemo -- --feature checkout      # a @regression feature
 npm run test:bdd:saucedemo -- --feature login --tags "@smoke" --headed
 npm run bdd -- --tags "@ui and not @regression"       # across all apps
@@ -154,9 +152,9 @@ node scripts/new-app.mjs            # interactive prompts
 ```
 
 For each app the generator:
-- creates `apps/<name>/` (config, POM/SOM, spec + BDD fixtures, example specs/features);
+- creates `apps/<name>/` (config, POM/SOM, spec + BDD fixtures, example specs; UI apps also get example features — API is spec-only);
 - writes `apps/<name>/.env` (gitignored) + `.env.example` (committed) with `<NAME>_BASE_URL` and, when given, credentials;
-- registers it in `config/apps.ts` and adds `test:<name>` + `test:bdd:<name>` scripts;
+- registers it in `config/apps.ts` and adds `test:<name>` (plus `test:bdd:<name>` for UI apps);
 - **credentials** → `<NAME>_USERNAME` / `<NAME>_PASSWORD` in `apps/<name>/.env`, plus a `login.page.ts` that reads them (login spec/feature start as `fixme`/`@wip` until you fill in real selectors);
 - **Swagger/OpenAPI** → fetches the spec, saves `apps/<name>/openapi.json`, sets the base URL to the spec's origin, and generates a Service Object with methods for the spec's no-parameter GET endpoints plus a passing reachability smoke test.
 
@@ -204,7 +202,7 @@ implicitly accepts the previous stage:
 | Stage | Command | Specialist mission | Deliverable |
 |---|---|---|---|
 | 1 | `/test-plan` | WHAT to test — risks, strategy, scenarios, coverage matrix (not automation scope) | `01-Test-Plan.md` |
-| 2 | `/manual-qa` | Validate live (Playwright MCP / real HTTP) + write the Gherkin spec, reuse-first | `02-Manual-QA.md` + `apps/<app>/features/` |
+| 2 | `/manual-qa` | Validate live (Playwright MCP / real HTTP) + write the spec, reuse-first (UI Gherkin / API specs) | `02-Manual-QA.md` + `apps/<app>/features/` (UI) or `specs/api/` (API) |
 | 3 | `/auto-qa` | Evaluate **every** case, maximize automation, iterate generate → run → fix until stable | `03-Automation-QA.md` + code in `apps/<app>/` |
 | 4 | `/testops` | Run smoke/regression/UI/API/cross-browser; flake + failure analysis; release readiness | `04-TestOps.md` |
 
@@ -250,7 +248,7 @@ authored before their steps exist are tagged `@manual` until `/auto-qa` implemen
 
 ```text
 /test-plan https://petstore.swagger.io/v2/swagger.json  # → deliverables/petstore/01-Test-Plan.md + interactive review
-/manual-qa petstore      # validates live, updates Gherkin → 02-Manual-QA.md + review
+/manual-qa petstore      # validates live, updates API specs (Gherkin is UI-only) → 02-Manual-QA.md + review
 /auto-qa petstore        # writes + stabilizes code in apps/petstore/ → 03-Automation-QA.md + review
 /testops petstore        # runs the suites → 04-TestOps.md + release verdict + review
 /status petstore         # where am I? what's next?

@@ -6,43 +6,40 @@ import { deviceKey } from './lib/app-config';
 
 const smokeOnly = process.env.SMOKE_ONLY === '1';
 
-// One BDD config per app: each gets its own generated output dir and an
-// app-scoped `steps` glob. That isolation is what lets every app keep its own
-// `steps/fixtures.ts` (one `test` instance + one decorated class set per glob).
+// BDD is a UI-only concern: one BDD config per UI app, each with its own
+// generated output dir and an app-scoped `steps` glob. That isolation is what
+// lets every app keep its own `steps/fixtures.ts` (one `test` instance + one
+// decorated class set per glob). The `som/**` glob is kept so service objects
+// can still back UI BDD steps (setup/teardown/regular steps). API coverage is
+// spec-only (`api-<name>` projects in playwright.config.ts) — no BDD projects.
 const bddByApp = Object.fromEntries(
-  apps.map((app) => [
-    app.name,
-    defineBddConfig({
-      outputDir: `.features-gen/${app.name}`,
-      features: `apps/${app.name}/features/**/*.feature`,
-      steps: [
-        `apps/${app.name}/steps/**/*.ts`,
-        `apps/${app.name}/pom/**/*.ts`,
-        `apps/${app.name}/som/**/*.ts`,
-      ],
-    }),
-  ]),
+  apps
+    .filter((app) => app.ui)
+    .map((app) => [
+      app.name,
+      defineBddConfig({
+        outputDir: `.features-gen/${app.name}`,
+        features: `apps/${app.name}/features/**/*.feature`,
+        steps: [
+          `apps/${app.name}/steps/**/*.ts`,
+          `apps/${app.name}/pom/**/*.ts`,
+          `apps/${app.name}/som/**/*.ts`,
+        ],
+      }),
+    ]),
 );
 
-// Routing rule: an app with UI runs its BDD suite as browser projects; a
-// pure-API app runs it as an API project. (An app needing both UI and API BDD
-// can split features into features/ui + features/api and add matching projects.)
+// An app with UI runs its BDD suite as browser projects. Pure-API apps have no
+// BDD projects — their API surface is exercised by spec `api-<name>` projects.
 const projects: Project[] = apps.flatMap((app) => {
+  if (!app.ui) return [];
+
   const testDir = bddByApp[app.name];
-
-  if (app.ui) {
-    return app.ui.browsers.map((browser) => ({
-      name: `bdd-ui-${app.name}-${browser}`,
-      testDir,
-      use: { ...devices[deviceKey(browser)], baseURL: app.baseURL },
-    }));
-  }
-
-  if (app.api) {
-    return [{ name: `bdd-api-${app.name}`, testDir, use: { baseURL: app.baseURL } }];
-  }
-
-  return [];
+  return app.ui.browsers.map((browser) => ({
+    name: `bdd-ui-${app.name}-${browser}`,
+    testDir,
+    use: { ...devices[deviceKey(browser)], baseURL: app.baseURL },
+  }));
 });
 
 export default defineConfig({

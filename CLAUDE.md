@@ -5,9 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repo is
 
 A **multi-app** Playwright + `playwright-bdd` template. Each app under test lives
-in `apps/<name>/` and is exercised in two styles (spec + BDD) from one POM/SOM
-class layer. Bundled apps: `saucedemo` (UI), `petstore` (API). See `README.md` for
-the user-facing overview.
+in `apps/<name>/` and is driven from one POM/SOM class layer: **UI** apps run in
+two styles (spec + BDD), while **API** coverage is **spec-only** (no feature files).
+Bundled apps: `saucedemo` (UI), `petstore` (API). See `README.md` for the
+user-facing overview.
 
 ## Commands
 
@@ -21,19 +22,18 @@ npm run test:api                       # all API spec tests (path filter: specs/
 npm run test:ui                        # all UI spec tests, smoke (path filter: specs/e2e)
 npm run test:regression                # UI specs incl. specs/e2e/workflows/**
 
-# BDD style (generates .features-gen/<app>/ first, then runs Playwright)
-npm run test:bdd                       # smoke, all apps
+# BDD style — UI only (generates .features-gen/<app>/ first, then runs Playwright)
+npm run test:bdd                       # smoke, all UI apps
 npm run test:bdd:ui                    # @ui scenarios
-npm run test:bdd:api                   # @api scenarios
 npm run test:bdd:regression            # includes @regression
 
 # Scope to one app (per-app shortcuts; the /new-*-app commands generate these)
 npm run test:<app>                     # spec smoke for one app
-npm run test:bdd:<app>                 # BDD for one app (via scripts/bdd.mjs)
+npm run test:bdd:<app>                 # BDD for one UI app (via scripts/bdd.mjs)
 
 # Filter BDD by feature / tag expression (args after --)
-npm run test:bdd:petstore -- --feature pet
-npm run test:bdd:petstore -- --tags "@smoke and @api"
+npm run test:bdd:saucedemo -- --feature login
+npm run test:bdd:saucedemo -- --tags "@smoke and @ui"
 npm run bdd -- --tags "@ui and not @regression"   # all apps
 
 # Or use raw Playwright filters
@@ -68,14 +68,15 @@ map over the registry to **generate projects** — adding an app needs no config
 beyond registering it:
 
 - `playwright.config.ts` (spec) → `api-<name>` and `ui-<name>-<browser>` projects, routed by `testMatch` on `apps/<name>/specs/{api,e2e}/`.
-- `playwright.bdd.config.ts` (BDD) → **one `defineBddConfig` per app** (output `.features-gen/<name>/`, app-scoped `steps` glob) → `bdd-ui-<name>-<browser>` or `bdd-api-<name>` projects.
+- `playwright.bdd.config.ts` (BDD) → **one `defineBddConfig` per UI app** (output `.features-gen/<name>/`, app-scoped `steps` glob) → `bdd-ui-<name>-<browser>` projects.
 
 Per-app `defineBddConfig` is what lets each app keep its own `steps/fixtures.ts`:
 each config's `steps` glob sees exactly one `test` instance + one decorated class set.
 
-Routing rule: an app with `ui` runs its BDD suite as **browser** projects; a pure-`api`
-app runs it as an **API** project. (An app needing both UI and API BDD would split
-features into `features/ui` + `features/api` and add matching projects.)
+Routing rule: **BDD is UI-only** — only apps with `ui` get BDD (`bdd-ui-<name>-<browser>`)
+projects. API coverage is **spec-only** (`api-<name>` projects); a pure-`api` app has no
+BDD project. Its SOM keeps `@Given/@When/@Then` decorators (the `som/**` steps glob stays)
+so the service object can still back UI BDD steps when an app has both UI and API.
 
 ### URLs are decoupled from projects
 
@@ -101,7 +102,7 @@ Both fixtures files instantiate the same classes; adding a class means updating 
 |---|---|---|
 | POM | `apps/<name>/pom/*.page.ts` | UI interactions; `goto()`, `expectXxx()`, named locators |
 | SOM | `apps/<name>/som/*.api.ts` | HTTP checks via `APIRequestContext` |
-| BDD features | `apps/<name>/features/*.feature` | Gherkin tagged `@smoke`/`@regression`/`@ui`/`@api`/`@fail` |
+| BDD features | `apps/<name>/features/*.feature` | Gherkin (**UI only**) tagged `@smoke`/`@regression`/`@ui`/`@fail` |
 | BDD steps | `apps/<name>/steps/fixtures.ts`, `hooks.ts` | fixture wiring + Before/After; step impls live on POM/SOM |
 | Workflow specs | `apps/<name>/specs/e2e/workflows/` | multi-step flows, excluded from smoke via `SMOKE_ONLY=1` |
 

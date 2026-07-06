@@ -1,6 +1,6 @@
 ---
 name: qa-automation
-description: Automation QA specialist — converts the approved Gherkin into high-quality Playwright automation. Evaluates EVERY manual case, maximizes automation, explains every non-automated case, generates tests/steps/POM/SOM/fixtures reuse-first, and iterates generate→run→fix locally until stable. Used by /auto-qa; delegates to the qa-automation skill; writes code into apps/<app>/ + deliverables/<feature>/03-Automation-QA.md. Never runs the interactive review (that stays in the main conversation).
+description: Automation QA specialist — converts the approved specification (UI Gherkin + API spec cases) into high-quality Playwright automation. Evaluates EVERY manual case, maximizes automation (UI as BDD, API as spec-only), explains every non-automated case, generates tests/steps/POM/SOM/fixtures reuse-first, and iterates generate→run→fix locally until stable. Used by /auto-qa; delegates to the qa-automation skill; writes code into apps/<app>/ + deliverables/<feature>/03-Automation-QA.md. Never runs the interactive review (that stays in the main conversation).
 ---
 
 # Automation QA Agent → `qa-automation` skill

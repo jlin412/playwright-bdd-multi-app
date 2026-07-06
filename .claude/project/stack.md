@@ -6,8 +6,8 @@ Code-gen conventions → [conventions.md](conventions.md).
 ## Stack
 
 - **Playwright 1.57 + `playwright-bdd` 8.4 + TypeScript 5.7**, ESM, Node 20.
-- Two test styles from **one POM/SOM class layer**: spec (`@playwright/test`) and
-  BDD (Gherkin via `playwright-bdd`).
+- One **POM/SOM class layer**: spec (`@playwright/test`) for all coverage; BDD (Gherkin
+  via `playwright-bdd`) for **UI only**. API is **spec-only** — no feature files.
 
 ## App registry drives everything
 
@@ -15,9 +15,9 @@ Code-gen conventions → [conventions.md](conventions.md).
   from `lib/app-config.ts`: `{ name, baseURL, ui?, api? }`).
 - Both Playwright configs map over the registry to **generate** projects:
   - `playwright.config.ts` (spec) → `api-<name>`, `ui-<name>-<browser>`
-  - `playwright.bdd.config.ts` (BDD) → one `defineBddConfig` per app (output
-    `.features-gen/<name>/`, app-scoped `steps` glob) → `bdd-ui-<name>-<browser>`
-    or `bdd-api-<name>`
+  - `playwright.bdd.config.ts` (BDD, **UI apps only**) → one `defineBddConfig` per UI
+    app (output `.features-gen/<name>/`, app-scoped `steps` glob) →
+    `bdd-ui-<name>-<browser>`. Pure-API apps have no BDD project.
 - **Adding an app** = drop `apps/<name>/` (copy `_template`, or run `/new-ui-app` /
   `/new-api-app`) + one import + one array entry in `config/apps.ts`. No config edits.
 
@@ -27,7 +27,7 @@ Code-gen conventions → [conventions.md](conventions.md).
 |---|---|---|
 | POM | `apps/<name>/pom/*.page.ts` | UI interactions; `goto()`, `expectXxx()`, named locators |
 | SOM | `apps/<name>/som/*.api.ts` | HTTP checks via `APIRequestContext` |
-| Features | `apps/<name>/features/*.feature` | Gherkin tagged `@smoke`/`@regression`/`@ui`/`@api`/`@triage` |
+| Features | `apps/<name>/features/*.feature` | Gherkin (**UI only**) tagged `@smoke`/`@regression`/`@ui`/`@triage` |
 | Steps | `apps/<name>/steps/` | `fixtures.ts`, `hooks.ts`, cross-fixture orchestration |
 | Workflows | `apps/<name>/specs/e2e/workflows/` | multi-step flows, excluded from smoke |
 
@@ -59,7 +59,7 @@ into its generated projects' `use.baseURL`. Projects encode only browser/style.
 - `SMOKE_ONLY=1` excludes `specs/e2e/workflows/**` + `trace-fail` specs, and
   `@fail`/`@tracefail`/`@triage` BDD scenarios.
 - Spec: `npm test` · `test:api` · `test:ui` · `test:regression` · `test:<app>`
-- BDD: `npm run test:bdd` · `test:bdd:ui` · `test:bdd:api` · `test:bdd:regression` · `test:bdd:<app>`
+- BDD (UI only): `npm run test:bdd` · `test:bdd:ui` · `test:bdd:regression` · `test:bdd:<app>` (UI apps)
 - Triage (failed-case repros only): `npm run test:triage` · `test:bdd:triage`
 - Type-check (CI gate): `npx tsc --noEmit`
 - CI sets `forbidOnly`, `retries: 1`; BDD caps `workers: 2`. External targets
