@@ -20,7 +20,7 @@ export type AppDescriptor = {
   baseURL: string;
   /** Present for apps with UI coverage. Emits `ui-<name>-<browser>` (spec) and `bdd-ui-<name>-<browser>` (BDD) projects. */
   ui?: { browsers: Browser[] };
-  /** True for apps with API coverage. Emits an `api-<name>` spec project (and `bdd-api-<name>` when the app has no UI). */
+  /** True for apps with API coverage. Emits an `api-<name>` spec project. API is spec-only — no BDD project. */
   api?: boolean;
 };
 

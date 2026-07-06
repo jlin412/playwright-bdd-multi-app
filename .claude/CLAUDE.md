@@ -24,7 +24,7 @@ Requirements → /test-plan → /manual-qa → /auto-qa → /testops
 | Command | Specialist | Deliverable |
 |---|---|---|
 | `/test-plan` | Test Plan — WHAT to test (risks, strategy, scenarios, coverage matrix; **not** automation scope) | `deliverables/<feature>/01-Test-Plan.md` |
-| `/manual-qa` | Manual QA — live validation (Playwright MCP / real HTTP) + Gherkin spec, reuse-first | `02-Manual-QA.md` + `apps/<app>/features/` |
+| `/manual-qa` | Manual QA — live validation (Playwright MCP / real HTTP) + spec, reuse-first (UI Gherkin / API specs) | `02-Manual-QA.md` + `apps/<app>/features/` (UI) or `specs/api/` (API) |
 | `/auto-qa` | Automation QA — evaluate every case, maximize automation, generate → run → fix until stable | `03-Automation-QA.md` + code in `apps/<app>/` |
 | `/testops` | TestOps — run smoke/regression/UI/API/cross-browser, flake + failure analysis, release readiness | `04-TestOps.md` |
 

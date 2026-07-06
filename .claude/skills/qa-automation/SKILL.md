@@ -1,14 +1,16 @@
 ---
 name: qa-automation
-description: Convert the approved Gherkin and manual cases into high-quality Playwright automation. Evaluates EVERY manual case, maximizes automation, explains and estimates every case not automated, generates tests/steps/POM/SOM/fixtures reuse-first, and iterates generate→run→fix locally until stable. Used by /auto-qa. Writes code into apps/<app>/ + deliverables/<feature>/03-Automation-QA.md.
+description: Convert the approved specification (UI Gherkin + API spec cases) into high-quality Playwright automation. Evaluates EVERY manual case, maximizes automation, explains and estimates every case not automated, generates tests/steps/POM/SOM/fixtures reuse-first (UI as BDD, API as spec-only), and iterates generate→run→fix locally until stable. Used by /auto-qa. Writes code into apps/<app>/ + deliverables/<feature>/03-Automation-QA.md.
 ---
 
 # Automation QA skill
 
-Mission: convert the approved Gherkin into high-quality Playwright automation. Inputs:
-`01-Test-Plan.md`, `02-Manual-QA.md`, the updated Gherkin in `apps/<app>/features/`,
-and the existing repository — framework, step definitions, page objects, fixtures, and
-conventions. Bias strongly toward Playwright best practices. **Maximize automation.**
+Mission: convert the approved specification into high-quality Playwright automation —
+**UI as BDD, API as spec-only**. Inputs: `01-Test-Plan.md`, `02-Manual-QA.md`, the
+updated UI Gherkin in `apps/<app>/features/` and/or the API spec cases in
+`apps/<app>/specs/api/`, and the existing repository — framework, step definitions,
+page objects, service objects, fixtures, and conventions. Bias strongly toward
+Playwright best practices. **Maximize automation.**
 
 **Compose:** `.claude/project/conventions.md` (dual-style POM/SOM, three-section layout,
 locators, tags, where code is written) · **qa-triage** (for `fail` cases) · template
@@ -42,6 +44,9 @@ protocol after this skill.
    decorators; register each fixture in **both** `specs/fixtures.ts` and
    `steps/fixtures.ts`; relative navigation; `getByRole`/`getByLabel`/`getByTestId`;
    auto-retrying assertions; `@Then` uses "should"; never edit `.features-gen/`.
+   **API is spec-only**: API cases become `specs/api/*.spec.ts` tests calling SOM
+   action methods — never an API `.feature` file. A SOM's `@Given/@When/@Then`
+   decorators exist only to back UI BDD steps.
 6. **Transcribe, don't invent**: assertions use the **intended** expected values from
    `02-Manual-QA.md` verbatim. Carry each `TC-*` ID into the test/scenario title.
 7. Implementing a `@manual`-tagged scenario? Implement its steps, then retag it

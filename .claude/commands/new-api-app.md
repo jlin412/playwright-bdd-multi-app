@@ -16,14 +16,14 @@ Do this:
    - a **Swagger/OpenAPI spec URL** (preferred) and/or a **base URL**.
    If the name or a target is missing, ask the user before continuing.
 2. Run the generator (non-interactive). It registers the app in `config/apps.ts`,
-   adds `test:<name>` / `test:bdd:<name>` scripts, and writes
+   adds a `test:<name>` script (API is spec-only — no `test:bdd:<name>`), and writes
    `apps/<name>/.env` + `.env.example`:
    ```bash
    node scripts/new-app.mjs <name> --kind api --yes [--swagger <specUrl>] [--url <baseURL>]
    ```
    With `--swagger`, it fetches the spec, sets `baseURL` to the spec origin,
-   saves `apps/<name>/openapi.json`, and generates a SOM + specs for the spec's
-   no-parameter GET endpoints.
+   saves `apps/<name>/openapi.json`, and generates a SOM + spec tests for the spec's
+   no-parameter GET endpoints (no feature files — API is spec-only).
 3. Verify and report:
    ```bash
    npx tsc --noEmit

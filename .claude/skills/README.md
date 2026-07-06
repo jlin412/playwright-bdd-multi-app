@@ -8,7 +8,7 @@ Templates (deliverable shape), and Project Memory (repo facts). Skills are mode-
 | Skill | Specialist | Used by | Deliverable |
 |---|---|---|---|
 | [qa-test-plan](qa-test-plan/SKILL.md) | Test Plan | `/test-plan` | `01-Test-Plan.md` |
-| [qa-manual](qa-manual/SKILL.md) | Manual QA | `/manual-qa` | `02-Manual-QA.md` + Gherkin |
+| [qa-manual](qa-manual/SKILL.md) | Manual QA | `/manual-qa` | `02-Manual-QA.md` + UI Gherkin / API specs |
 | [qa-automation](qa-automation/SKILL.md) | Automation QA | `/auto-qa` | `03-Automation-QA.md` + code |
 | [qa-testops](qa-testops/SKILL.md) | TestOps | `/testops` (feature or `repo`) | `04-TestOps.md` / `_repo/TestOps.md` + `_repo/ledger.md` |
 | [qa-investigate](qa-investigate/SKILL.md) | Bug Investigator | `/investigate` (on demand) | `05-Investigations.md` |

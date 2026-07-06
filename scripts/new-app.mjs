@@ -332,15 +332,6 @@ test.describe('${title} API', () => {
 });
 `;
 
-const healthFeature = (title) => `@smoke @api
-Feature: ${title} API
-
-    Scenario: API root is reachable
-        Given the API is reachable
-        When I request the root path
-        Then the response should be returned without a server error
-`;
-
 function swaggerSom(name, api, swaggerUrl) {
   const cls = `${pascal(name)}Api`;
   const fix = `${camel(name)}Api`;
@@ -404,18 +395,6 @@ ${cases}
 `;
 }
 
-const swaggerFeature = (api) => {
-  const first = api.ops[0]?.fullPath ?? api.basePath ?? '/';
-  return `@smoke @api
-Feature: ${api.title} API
-
-    Scenario: ${first} is reachable
-        Given the API is reachable
-        When I request the primary endpoint
-        Then the response should be returned without a server error
-`;
-};
-
 const hooks = (name) => `import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
@@ -442,12 +421,13 @@ async function registerInRegistry(name) {
   await fs.writeFile(registryPath, src);
 }
 
-async function addPackageScripts(name) {
+async function addPackageScripts(name, kind) {
   const pkgPath = path.join(root, 'package.json');
   const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
   pkg.scripts ??= {};
   pkg.scripts[`test:${name}`] = `SMOKE_ONLY=1 playwright test apps/${name}`;
-  pkg.scripts[`test:bdd:${name}`] = `node scripts/bdd.mjs ${name}`;
+  // BDD is UI-only; pure-API apps have no BDD project to run.
+  if (kind !== 'api') pkg.scripts[`test:bdd:${name}`] = `node scripts/bdd.mjs ${name}`;
   await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 }
 
@@ -523,7 +503,7 @@ async function main() {
   // Scaffold structure from the template, then prune + replace example files.
   await copyDir(path.join(root, 'apps', '_template'), appDir);
   if (kind === 'ui') { await rmDir(path.join(appDir, 'som')); await rmDir(path.join(appDir, 'specs', 'api')); }
-  else if (kind === 'api') { await rmDir(path.join(appDir, 'pom')); await rmDir(path.join(appDir, 'specs', 'e2e')); }
+  else if (kind === 'api') { await rmDir(path.join(appDir, 'pom')); await rmDir(path.join(appDir, 'specs', 'e2e')); await rmDir(path.join(appDir, 'features')); }
   for (const f of ['pom/example.page.ts', 'som/example.api.ts', 'specs/e2e/example.spec.ts', 'specs/api/example.spec.ts', 'features/example.feature']) {
     await rmFile(path.join(appDir, f));
   }
@@ -546,18 +526,17 @@ async function main() {
     }
   }
 
-  // API side
+  // API side — spec-only (no feature files). SOMs keep their dual-style
+  // decorators so they can back UI BDD steps when the app also has a UI.
   if (kind !== 'ui') {
     if (api) {
       await fs.writeFile(path.join(appDir, 'som', `${name}.api.ts`), swaggerSom(name, api, swagger));
       await fs.writeFile(path.join(appDir, 'specs', 'api', `${name}.spec.ts`), swaggerSpec(name, api));
-      await fs.writeFile(path.join(appDir, 'features', `${name}.feature`), swaggerFeature(api));
       await fs.writeFile(path.join(appDir, 'openapi.json'), JSON.stringify(api._spec, null, 2) + '\n');
       classes.push({ fixture: `${camel(name)}Api`, className: `${pascal(name)}Api`, importPath: `../som/${name}.api`, ctor: 'request' });
     } else {
       await fs.writeFile(path.join(appDir, 'som', 'health.api.ts'), healthSom());
       await fs.writeFile(path.join(appDir, 'specs', 'api', 'health.spec.ts'), healthSpec(title));
-      await fs.writeFile(path.join(appDir, 'features', 'health.feature'), healthFeature(title));
       classes.push({ fixture: 'healthApi', className: 'HealthApi', importPath: '../som/health.api', ctor: 'request' });
     }
   }
@@ -571,19 +550,19 @@ async function main() {
   await writeAppEnv(appDir, ENV, url, username, password);
 
   await registerInRegistry(name);
-  await addPackageScripts(name);
+  await addPackageScripts(name, kind);
 
   console.log('');
   console.log(`✓ Created apps/${name} (kind: ${kind}, baseURL: ${url})`);
   console.log(`✓ Registered "${name}" in config/apps.ts`);
-  console.log(`✓ Added npm scripts: test:${name}, test:bdd:${name}`);
+  console.log(`✓ Added npm scripts: test:${name}${kind === 'api' ? '' : `, test:bdd:${name}`}`);
   if (api) console.log(`✓ Swagger: ${api.ops.length} GET endpoint(s) -> som/${name}.api.ts (+ openapi.json)`);
   console.log(`✓ Wrote apps/${name}/.env (gitignored) + .env.example${username ? ' with credentials' : ''}`);
   console.log('');
   console.log('Next steps:');
-  console.log(`  1. Edit apps/${name}/${kind === 'api' ? 'som' : 'pom'}/* and specs/features for your app.`);
+  console.log(`  1. Edit apps/${name}/${kind === 'api' ? 'som/* and specs/api' : 'pom/* and specs/features'} for your app.`);
   if (username) console.log('  2. Fill in real login selectors, then remove .fixme / re-tag the login feature @smoke.');
-  console.log(`  ${username ? 3 : 2}. Run it:  npm run test:${name}   (BDD: npm run test:bdd:${name})`);
+  console.log(`  ${username ? 3 : 2}. Run it:  npm run test:${name}${kind === 'api' ? '' : `   (BDD: npm run test:bdd:${name})`}`);
 }
 
 main().catch((err) => {

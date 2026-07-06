@@ -14,15 +14,16 @@ Input `$ARGUMENTS`: `<feature>` (optionally extra focus notes).
 2. Run the **qa-manual** skill (delegable to the `qa-manual` subagent). It explores and
    validates live — Playwright MCP browser for UI, real HTTP for API; validation and
    discovery, **not** automation generation — executing happy paths, negatives, and
-   edge cases per `TC-*`, recording intended vs actual + status, then creates/updates
-   Gherkin in `apps/<app>/features/` (reuse-first; unimplemented scenarios tagged
-   `@manual`). Writes `deliverables/<feature>/02-Manual-QA.md`.
+   edge cases per `TC-*`, recording intended vs actual + status, then specifies the
+   coverage reuse-first — **UI** as Gherkin in `apps/<app>/features/` (unimplemented
+   scenarios tagged `@manual`), **API** as spec cases in `apps/<app>/specs/api/` (no
+   feature files). Writes `deliverables/<feature>/02-Manual-QA.md`.
 
 ## Steps 2–6 — Review (the `qa-review` skill, in the main conversation)
 
 - **Open** the deliverable automatically (`code` + a clickable link).
 - **Executive Summary** in chat: cases executed (pass/fail/blocked/not-run), possible
-  defects, ambiguities, discovered cases, Gherkin files created/updated.
+  defects, ambiguities, discovered cases, files created/updated (UI Gherkin / API specs).
 - **Review Checklist** from `.claude/checklists/review-manual-qa.md`, each item ✓/✗.
 - **Interactive review** — one question per turn (recommendation + reasoning + impact);
   typical judgment calls here: is a divergence a defect or intended behavior, blocked
