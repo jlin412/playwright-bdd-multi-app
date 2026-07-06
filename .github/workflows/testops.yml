@@ -25,10 +25,10 @@ jobs:
             command: npm test
             gate: smoke
           - suite: bdd-smoke
-            command: npm run test:bdd
+            command: npm run test:bdd:smoke
             gate: smoke
           - suite: spec-regression
-            command: npm run test:regression
+            command: npm run test:ui:regression
             gate: regression
           - suite: bdd-regression
             command: npm run test:bdd:regression

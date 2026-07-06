@@ -11,8 +11,8 @@ Input `$ARGUMENTS`: optional `<app>` to scope to one app.
 Regression is `@smoke` + `@regression` and includes `specs/e2e/workflows/**` (no
 `SMOKE_ONLY`), in both styles:
 
-- **Whole repo**: `npm run test:regression` (spec), then `npm run test:bdd:regression`
-  (BDD).
+- **Whole repo**: `npm run test:ui:regression` (spec, UI), `npm run test:api:regression`
+  (spec, API), then `npm run test:bdd:regression` (BDD).
 - **One app** (`<app>`): `npx playwright test apps/<app>` (spec — includes that app's
   workflows), then
   `node scripts/bdd.mjs <app> --tags "(@smoke or @regression) and not @tracefail and not @triage"`

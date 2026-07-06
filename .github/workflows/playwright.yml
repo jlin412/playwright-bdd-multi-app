@@ -35,7 +35,7 @@ jobs:
         run: npm test
 
       - name: Run Playwright BDD smoke
-        run: npm run test:bdd
+        run: npm run test:bdd:smoke
 
       - name: Upload reports
         if: always()

@@ -323,7 +323,7 @@ export class HealthApi {
 
 const healthSpec = (title) => `import { expect, test } from '../fixtures';
 
-test.describe('${title} API', () => {
+test.describe('${title} API', { tag: '@smoke' }, () => {
   test('root path is reachable', async ({ healthApi }) => {
     await healthApi.waitUntilReady();
     const res = await healthApi.request.get('/');
@@ -385,7 +385,7 @@ function swaggerSpec(name, api) {
     .join('\n\n');
   return `import { expect, test } from '../fixtures';
 
-test.describe('${api.title} API', () => {
+test.describe('${api.title} API', { tag: '@smoke' }, () => {
   test('API is reachable', async ({ ${fix} }) => {
     await ${fix}.waitUntilReady();
   });

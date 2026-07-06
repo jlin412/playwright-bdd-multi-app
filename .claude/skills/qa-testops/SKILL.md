@@ -17,9 +17,9 @@ after this skill.
 Execute the suites relevant to the feature's scope (commands in
 `.claude/project/stack.md`), typically:
 
-- **Smoke** — `npm test` (spec) + `npm run test:bdd` (BDD)
-- **Regression** — `npm run test:regression` + `npm run test:bdd:regression`
-- **UI / API splits** — `npm run test:ui` / `npm run test:api` (+ BDD equivalents)
+- **Smoke** — `npm test` (spec, all apps) + `npm run test:bdd:smoke` (BDD)
+- **Regression** — `npm run test:ui:regression` + `npm run test:api:regression` + `npm run test:bdd:regression`
+- **UI / API splits** — `npm run test:ui:smoke` / `npm run test:api:smoke` (+ BDD equivalents)
 - **Cross-browser** (if the app has a UI) — the generated per-browser projects
   (`--project=ui-<app>-firefox`, `-webkit`, or the BDD equivalents)
 - **Triage repros** — `npm run test:triage` / `npm run test:bdd:triage` (expected to

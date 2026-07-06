@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures';
 
-test.describe('Pet Store API - pets', () => {
+test.describe('Pet Store API - pets', { tag: '@smoke' }, () => {
   test('a created pet can be fetched back by id', async ({ petApi }) => {
     await petApi.waitUntilReady();
 
@@ -27,7 +27,7 @@ test.describe('Pet Store API - pets', () => {
   });
 });
 
-test.describe('Pet Store API - find by status (regression)', () => {
+test.describe('Pet Store API - find by status (regression)', { tag: '@regression' }, () => {
   test('findByStatus pending returns a well-formed list', async ({ petApi }) => {
     await petApi.waitUntilReady();
 
@@ -51,7 +51,7 @@ test.describe('Pet Store API - find by status (regression)', () => {
   });
 });
 
-test.describe('Pet Store API - update pet', () => {
+test.describe('Pet Store API - update pet', { tag: '@regression' }, () => {
   test('updatePet (PUT) persists new name and status', async ({ petApi }) => {
     await petApi.waitUntilReady();
 
@@ -91,7 +91,7 @@ test.describe('Pet Store API - update pet', () => {
   });
 });
 
-test.describe('Pet Store API - delete pet', () => {
+test.describe('Pet Store API - delete pet', { tag: '@regression' }, () => {
   test('deletePet - subsequent GET returns 404', async ({ petApi }) => {
     await petApi.waitUntilReady();
 
@@ -118,7 +118,7 @@ test.describe('Pet Store API - delete pet', () => {
   });
 });
 
-test.describe('Pet Store API - findByTags (deprecated)', () => {
+test.describe('Pet Store API - findByTags (deprecated)', { tag: '@regression' }, () => {
   test('findByTags returns array or null on deprecation', async ({ petApi }) => {
     await petApi.waitUntilReady();
 
@@ -130,7 +130,7 @@ test.describe('Pet Store API - findByTags (deprecated)', () => {
   });
 });
 
-test.describe('Pet Store API - upload image', () => {
+test.describe('Pet Store API - upload image', { tag: '@regression' }, () => {
   test('uploadImage returns ApiResponse shape', async ({ petApi }) => {
     await petApi.waitUntilReady();
 

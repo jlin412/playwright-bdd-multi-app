@@ -1,7 +1,7 @@
 import { expect, test } from '../fixtures';
 
 test.describe('Pet Store API - user lifecycle', () => {
-  test('create user and retrieve by username', async ({ petApi, userApi }) => {
+  test('create user and retrieve by username', { tag: '@smoke' }, async ({ petApi, userApi }) => {
     await petApi.waitUntilReady();
 
     const user = userApi.buildUser(`createtest-${Date.now()}`);
@@ -18,7 +18,7 @@ test.describe('Pet Store API - user lifecycle', () => {
     }
   });
 
-  test('login returns token and headers', async ({ petApi, userApi }) => {
+  test('login returns token and headers', { tag: '@smoke' }, async ({ petApi, userApi }) => {
     await petApi.waitUntilReady();
 
     const user = userApi.buildUser(`logintest-${Date.now()}`);
@@ -33,14 +33,14 @@ test.describe('Pet Store API - user lifecycle', () => {
     }
   });
 
-  test('logout returns 200', async ({ petApi, userApi }) => {
+  test('logout returns 200', { tag: '@regression' }, async ({ petApi, userApi }) => {
     await petApi.waitUntilReady();
     // logout does not require a prior login in this sandbox.
     await expect(userApi.logout()).resolves.not.toThrow();
   });
 });
 
-test.describe('Pet Store API - user update and delete', () => {
+test.describe('Pet Store API - user update and delete', { tag: '@regression' }, () => {
   test('update user - PUT request succeeds', async ({ petApi, userApi }) => {
     await petApi.waitUntilReady();
 
@@ -69,7 +69,7 @@ test.describe('Pet Store API - user update and delete', () => {
   });
 });
 
-test.describe('Pet Store API - user error responses', () => {
+test.describe('Pet Store API - user error responses', { tag: '@regression' }, () => {
   test('GET nonexistent username returns 404', async ({ petApi, userApi }) => {
     await petApi.waitUntilReady();
     const status = await userApi.getUserStatus(`nonexistent-user-${Date.now()}`);
@@ -77,7 +77,7 @@ test.describe('Pet Store API - user error responses', () => {
   });
 });
 
-test.describe('Pet Store API - bulk user creation', () => {
+test.describe('Pet Store API - bulk user creation', { tag: '@regression' }, () => {
   test('createWithArray - all usernames retrievable', async ({ petApi, userApi }) => {
     await petApi.waitUntilReady();
 

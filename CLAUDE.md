@@ -19,11 +19,13 @@ npx playwright install                 # all browsers (chromium/firefox/webkit)
 # Spec style
 npm test                               # smoke, all apps
 npm run test:api                       # all API spec tests (path filter: specs/api)
-npm run test:ui                        # all UI spec tests, smoke (path filter: specs/e2e)
-npm run test:regression                # UI specs incl. specs/e2e/workflows/**
+npm run test:api:smoke                 # API @smoke-tagged tests only
+npm run test:api:regression            # API @smoke + @regression tests (i.e. all real cases)
+npm run test:ui:smoke                  # all UI spec tests, smoke (path filter: specs/e2e)
+npm run test:ui:regression             # UI specs incl. specs/e2e/workflows/**
 
 # BDD style — UI only (generates .features-gen/<app>/ first, then runs Playwright)
-npm run test:bdd                       # smoke, all UI apps
+npm run test:bdd:smoke                 # smoke, all UI apps
 npm run test:bdd:ui                    # @ui scenarios
 npm run test:bdd:regression            # includes @regression
 
@@ -101,7 +103,7 @@ Both fixtures files instantiate the same classes; adding a class means updating 
 | Layer | Location | Purpose |
 |---|---|---|
 | POM | `apps/<name>/pom/*.page.ts` | UI interactions; `goto()`, `expectXxx()`, named locators |
-| SOM | `apps/<name>/som/*.api.ts` | HTTP checks via `APIRequestContext` |
+| SOM | `apps/<name>/som/*.api.ts` | HTTP checks via `APIRequestContext`; tagged via Playwright's native `{ tag: '@smoke' }` on `specs/api/*.spec.ts` |
 | BDD features | `apps/<name>/features/*.feature` | Gherkin (**UI only**) tagged `@smoke`/`@regression`/`@ui`/`@fail` |
 | BDD steps | `apps/<name>/steps/fixtures.ts`, `hooks.ts` | fixture wiring + Before/After; step impls live on POM/SOM |
 | Workflow specs | `apps/<name>/specs/e2e/workflows/` | multi-step flows, excluded from smoke via `SMOKE_ONLY=1` |
@@ -182,7 +184,7 @@ Project Memory: [`.claude/project/conventions.md`](.claude/project/conventions.m
 ```bash
 npx tsc --noEmit                       # type-check
 npm test                               # spec smoke (all apps)
-npm run test:bdd                       # BDD smoke (all apps)
+npm run test:bdd:smoke                 # BDD smoke (all apps)
 npm run test:bdd:regression            # full BDD regression
 ```
 
