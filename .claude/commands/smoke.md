@@ -10,7 +10,7 @@ Input `$ARGUMENTS`: optional `<app>` to scope to one app.
 
 Smoke is the must-pass gate (`@smoke`, `SMOKE_ONLY=1`) in both styles:
 
-- **Whole repo**: `npm test` (spec), then `npm run test:bdd` (BDD).
+- **Whole repo**: `npm test` (spec, all apps), then `npm run test:bdd:smoke` (BDD).
 - **One app** (`<app>`): `npm run test:<app>`, then `npm run test:bdd:<app>`.
 
 ## Report

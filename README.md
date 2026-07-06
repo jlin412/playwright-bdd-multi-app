@@ -64,12 +64,14 @@ npx playwright install            # all browsers (chromium/firefox/webkit)
 ```bash
 # Everything (smoke)
 npm test                          # spec-style smoke, all apps
-npm run test:bdd                  # BDD smoke, all apps (runs bddgen first)
+npm run test:bdd:smoke            # BDD smoke, all apps (runs bddgen first)
 
-# By style
+# By style (each style follows the same <style>:smoke / <style>:regression pattern)
 npm run test:api                  # all API spec tests
-npm run test:ui                   # all UI spec tests (smoke)
-npm run test:regression           # all UI spec tests incl. multi-step workflows
+npm run test:api:smoke            # API @smoke-tagged tests only
+npm run test:api:regression       # API @smoke + @regression tests (all real cases)
+npm run test:ui:smoke             # all UI spec tests (smoke)
+npm run test:ui:regression        # all UI spec tests incl. multi-step workflows
 
 # By app (shortcut scripts — UI apps get spec + BDD, API apps spec only)
 npm run test:saucedemo            # spec smoke for saucedemo (all 3 browsers)
@@ -81,6 +83,7 @@ npm run test:petstore             # spec for petstore (spec-only; no BDD)
 # By project (browser/style + app)
 npx playwright test --project=ui-saucedemo-chromium
 npx playwright test --project=api-petstore
+npx playwright test --project=api-petstore --grep @smoke   # one app, smoke only
 npx playwright test -c playwright.bdd.config.ts --project=bdd-ui-saucedemo-firefox
 
 # BDD by tag (UI only)
@@ -89,6 +92,8 @@ npm run test:bdd:ui               # @ui scenarios
 
 Generated project names follow `ui-<app>-<browser>`, `api-<app>`,
 `bdd-ui-<app>-<browser>`. API is spec-only, so there is no `bdd-api-<app>` project.
+API tests carry Playwright's native `{ tag: '@smoke' }` / `@regression` (not Gherkin
+tags — see `apps/petstore/specs/api/*.spec.ts`); filter any API run with `--grep`.
 
 ### Filter BDD by feature and/or tag expression
 
@@ -125,7 +130,7 @@ Because Playwright runs all apps in one process, **keep keys app-unique
 
 Other knobs:
 - `<NAME>_BASE_URL` — override any app's base URL (also settable as a shell/CI var).
-- `SMOKE_ONLY=1` — excludes multi-step `specs/e2e/workflows/**` and `@fail`/`@tracefail` BDD scenarios (set automatically by `npm test` / `npm run test:bdd`).
+- `SMOKE_ONLY=1` — excludes multi-step `specs/e2e/workflows/**` and `@fail`/`@tracefail` BDD scenarios (set automatically by `npm test` / `npm run test:bdd:smoke`).
 - In CI, any per-app secrets are set as workflow env vars — they override the (absent) per-app `.env`.
 
 ## Add a new app

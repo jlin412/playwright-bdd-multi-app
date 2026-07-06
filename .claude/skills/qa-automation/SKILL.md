@@ -22,7 +22,8 @@ protocol after this skill.
 1. Read `02-Manual-QA.md`. Evaluate **every** `TC-*` case and gate it by its manual
    execution status:
    - `pass` → automate as a normal test asserting the intended result
-     (`@smoke`/`@regression`).
+     (`@smoke`/`@regression` — Gherkin tag for UI, Playwright `{ tag: '@smoke' }` for
+     an API spec test).
    - `fail` → automate as a `@triage` **reproduction** asserting the *intended* result
      (see **qa-triage**); excluded from smoke/regression. Never assert the buggy
      observed value.
@@ -45,8 +46,9 @@ protocol after this skill.
    `steps/fixtures.ts`; relative navigation; `getByRole`/`getByLabel`/`getByTestId`;
    auto-retrying assertions; `@Then` uses "should"; never edit `.features-gen/`.
    **API is spec-only**: API cases become `specs/api/*.spec.ts` tests calling SOM
-   action methods — never an API `.feature` file. A SOM's `@Given/@When/@Then`
-   decorators exist only to back UI BDD steps.
+   action methods — never an API `.feature` file. Tag each test/describe with
+   Playwright's native `{ tag: '@smoke' }` / `@regression` / `@triage` (not a Gherkin
+   tag). A SOM's `@Given/@When/@Then` decorators exist only to back UI BDD steps.
 6. **Transcribe, don't invent**: assertions use the **intended** expected values from
    `02-Manual-QA.md` verbatim. Carry each `TC-*` ID into the test/scenario title.
 7. Implementing a `@manual`-tagged scenario? Implement its steps, then retag it

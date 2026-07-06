@@ -28,6 +28,7 @@ Code-gen conventions → [conventions.md](conventions.md).
 | POM | `apps/<name>/pom/*.page.ts` | UI interactions; `goto()`, `expectXxx()`, named locators |
 | SOM | `apps/<name>/som/*.api.ts` | HTTP checks via `APIRequestContext` |
 | Features | `apps/<name>/features/*.feature` | Gherkin (**UI only**) tagged `@smoke`/`@regression`/`@ui`/`@triage` |
+| API specs | `apps/<name>/specs/api/*.spec.ts` | Playwright test tags `{ tag: '@smoke' }` / `@regression` / `@triage` (native tag option, not Gherkin) |
 | Steps | `apps/<name>/steps/` | `fixtures.ts`, `hooks.ts`, cross-fixture orchestration |
 | Workflows | `apps/<name>/specs/e2e/workflows/` | multi-step flows, excluded from smoke |
 
@@ -58,8 +59,12 @@ into its generated projects' `use.baseURL`. Projects encode only browser/style.
 
 - `SMOKE_ONLY=1` excludes `specs/e2e/workflows/**` + `trace-fail` specs, and
   `@fail`/`@tracefail`/`@triage` BDD scenarios.
-- Spec: `npm test` · `test:api` · `test:ui` · `test:regression` · `test:<app>`
-- BDD (UI only): `npm run test:bdd` · `test:bdd:ui` · `test:bdd:regression` · `test:bdd:<app>` (UI apps)
+- `npm test` — aggregate smoke, all apps, all styles (spec + API, not BDD).
+- Consistent `<style>:smoke` / `<style>:regression` naming per style:
+  - Spec API: `test:api` (all, untagged) · `test:api:smoke` · `test:api:regression`
+  - Spec UI: `test:ui:smoke` · `test:ui:regression`
+  - BDD (UI only): `test:bdd:smoke` · `test:bdd:regression` · `test:bdd:ui` (the `@ui`-tag filter, an orthogonal axis)
+- Per-app: `test:<app>` (spec) · `test:bdd:<app>` (UI apps only)
 - Triage (failed-case repros only): `npm run test:triage` · `test:bdd:triage`
 - Type-check (CI gate): `npx tsc --noEmit`
 - CI sets `forbidOnly`, `retries: 1`; BDD caps `workers: 2`. External targets

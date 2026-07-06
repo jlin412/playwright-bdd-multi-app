@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures';
 
-test.describe('Pet Store API - store', () => {
+test.describe('Pet Store API - store', { tag: '@smoke' }, () => {
   test('inventory returns numeric status counts', async ({ storeApi }) => {
     const inventory = await storeApi.getInventory();
 
@@ -13,7 +13,7 @@ test.describe('Pet Store API - store', () => {
 });
 
 test.describe('Pet Store API - order lifecycle', () => {
-  test('place order and retrieve by ID', async ({ petApi, storeApi }) => {
+  test('place order and retrieve by ID', { tag: '@smoke' }, async ({ petApi, storeApi }) => {
     await petApi.waitUntilReady();
 
     const order = storeApi.buildOrder(1);
@@ -32,7 +32,7 @@ test.describe('Pet Store API - order lifecycle', () => {
     }
   });
 
-  test('delete order - subsequent GET returns 404', async ({ petApi, storeApi }) => {
+  test('delete order - subsequent GET returns 404', { tag: '@regression' }, async ({ petApi, storeApi }) => {
     await petApi.waitUntilReady();
 
     const order = storeApi.buildOrder(1);
@@ -50,7 +50,7 @@ test.describe('Pet Store API - order lifecycle', () => {
   });
 });
 
-test.describe('Pet Store API - order error responses', () => {
+test.describe('Pet Store API - order error responses', { tag: '@regression' }, () => {
   test('GET order with invalid ID 0 returns client error', async ({ petApi, storeApi }) => {
     await petApi.waitUntilReady();
     // The sandbox returns 404 for order ID 0 (not 400 as the spec implies).
@@ -66,7 +66,7 @@ test.describe('Pet Store API - order error responses', () => {
   });
 });
 
-test.describe('Pet Store API - auth informational', () => {
+test.describe('Pet Store API - auth informational', { tag: '@regression' }, () => {
   test('GET inventory without api_key - observe sandbox behavior', async ({ request, petApi }) => {
     await petApi.waitUntilReady();
 
