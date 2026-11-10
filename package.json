@@ -1,6 +1,6 @@
 {
   "name": "playwright-ai-testing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Generic multi-app Playwright + playwright-bdd template: add a new UI/API app under apps/<name>/ with both spec-style and BDD-style coverage from one POM/SOM layer.",
